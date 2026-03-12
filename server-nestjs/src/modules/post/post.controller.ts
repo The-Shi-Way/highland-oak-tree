@@ -45,6 +45,18 @@ export class PostController {
     return this.postService.listAll(query.page, query.limit);
   }
 
+  @Get('admin/:id')
+  @UseGuards(CognitoGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get any post by ID (admin)' })
+  async getById(@Param('id') id: string): Promise<IPost> {
+    const result = await this.postService.findById(id as PostId);
+    if (!result.ok) {
+      throw new HttpException(result.error, HttpStatus.NOT_FOUND);
+    }
+    return result.value;
+  }
+
   @Get(':slug')
   @ApiOperation({ summary: 'Get published post by slug (public)' })
   async getBySlug(@Param('slug') slug: string): Promise<IPost> {

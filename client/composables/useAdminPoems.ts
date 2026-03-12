@@ -26,7 +26,7 @@ export function useAdminPoemList() {
 }
 
 export async function fetchPoem(id: string): Promise<IPoemDetail> {
-  return await $fetch<IPoemDetail>(`${apiBase()}/poems/${id}`, {
+  return await $fetch<IPoemDetail>(`${apiBase()}/poems/admin/${id}`, {
     headers: authHeaders(),
   });
 }

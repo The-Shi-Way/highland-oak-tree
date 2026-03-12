@@ -27,7 +27,7 @@ export function useAdminPostList(page: Ref<number>) {
 }
 
 export async function fetchPost(id: string): Promise<IPostDetail> {
-  return await $fetch<IPostDetail>(`${apiBase()}/posts/${id}`, {
+  return await $fetch<IPostDetail>(`${apiBase()}/posts/admin/${id}`, {
     headers: authHeaders(),
   });
 }

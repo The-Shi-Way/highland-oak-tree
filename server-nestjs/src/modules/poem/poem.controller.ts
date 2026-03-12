@@ -43,6 +43,18 @@ export class PoemController {
     return this.poemService.listAll();
   }
 
+  @Get('admin/:id')
+  @UseGuards(CognitoGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get any poem by ID (admin)' })
+  async getByIdAdmin(@Param('id') id: string): Promise<IPoem> {
+    const result = await this.poemService.findById(id as PoemId);
+    if (!result.ok) {
+      throw new HttpException(result.error, HttpStatus.NOT_FOUND);
+    }
+    return result.value;
+  }
+
   @Get(':id')
   @ApiOperation({ summary: 'Get a published poem by ID (public)' })
   async getById(@Param('id') id: string): Promise<IPoem> {
