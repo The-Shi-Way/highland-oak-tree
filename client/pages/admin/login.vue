@@ -12,17 +12,17 @@
 
       <form @submit.prevent="handleLogin" class="login-form">
         <div class="form-group">
-          <label for="username">
+          <label for="email">
             <User :size="14" />
-            Username
+            Email
           </label>
           <input
-            id="username"
-            v-model="username"
-            type="text"
+            id="email"
+            v-model="email"
+            type="email"
             required
-            autocomplete="username"
-            placeholder="Enter your username"
+            autocomplete="email"
+            placeholder="Enter your email"
             :disabled="loading"
           />
         </div>
@@ -66,7 +66,7 @@ useHead({ title: 'Login | Admin | The Highland Oak Tree' });
 
 const { login, store } = useAuth();
 
-const username = ref('');
+const email = ref('');
 const password = ref('');
 const loading = ref(false);
 const errorMsg = ref('');
@@ -79,7 +79,7 @@ async function handleLogin(): Promise<void> {
   errorMsg.value = '';
   loading.value = true;
   try {
-    await login({ username: username.value, password: password.value });
+    await login({ email: email.value, password: password.value });
     navigateTo('/admin');
   } catch {
     errorMsg.value = 'Invalid credentials. Please try again.';

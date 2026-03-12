@@ -1,7 +1,7 @@
 import { useAuthStore } from '~/stores/auth';
 
 interface ILoginPayload {
-  username: string;
+  email: string;
   password: string;
 }
 

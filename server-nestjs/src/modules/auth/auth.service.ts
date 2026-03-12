@@ -28,6 +28,11 @@ export class AuthService {
   }
 
   async login(email: string, password: string): Promise<Result<IAuthTokens, DomainError>> {
+    // Dev-mode bypass: skip Cognito when running locally
+    if (this.config.get<string>('NODE_ENV') === 'development') {
+      return this.devLogin(email, password);
+    }
+
     try {
       const command = new InitiateAuthCommand({
         AuthFlow: AuthFlowType.USER_PASSWORD_AUTH,
@@ -76,6 +81,16 @@ export class AuthService {
   }
 
   async refresh(refreshToken: string): Promise<Result<IAuthTokens, DomainError>> {
+    // Dev-mode bypass
+    if (this.config.get<string>('NODE_ENV') === 'development' && refreshToken === 'dev-refresh-token') {
+      const devEmail = this.config.get<string>('DEV_ADMIN_EMAIL', 'admin@highland.dev');
+      return ok({
+        accessToken: this.createDevToken(devEmail),
+        refreshToken: 'dev-refresh-token',
+        expiresIn: 86400,
+      });
+    }
+
     try {
       const command = new InitiateAuthCommand({
         AuthFlow: AuthFlowType.REFRESH_TOKEN_AUTH,
@@ -120,6 +135,11 @@ export class AuthService {
   }
 
   async logout(accessToken: string): Promise<Result<void, DomainError>> {
+    // Dev-mode: skip Cognito GlobalSignOut
+    if (this.config.get<string>('NODE_ENV') === 'development' && accessToken.endsWith('.dev-signature')) {
+      return ok(undefined);
+    }
+
     try {
       const command = new GlobalSignOutCommand({
         AccessToken: accessToken,
@@ -135,6 +155,43 @@ export class AuthService {
         message: 'Logout failed. Session may still be active.',
       });
     }
+  }
+
+  /**
+   * Dev-mode login: accepts credentials from DEV_ADMIN_EMAIL / DEV_ADMIN_PASSWORD env vars.
+   * Returns a self-signed mock JWT that CognitoGuard can decode.
+   * NEVER runs in production — guarded by NODE_ENV check in login().
+   */
+  private devLogin(email: string, password: string): Result<IAuthTokens, DomainError> {
+    const devEmail = this.config.get<string>('DEV_ADMIN_EMAIL', 'admin@highland.dev');
+    const devPassword = this.config.get<string>('DEV_ADMIN_PASSWORD', 'Admin123!');
+
+    if (email !== devEmail || password !== devPassword) {
+      return err({ kind: 'unauthorized', message: 'Invalid email or password' });
+    }
+
+    this.logger.warn('Dev-mode login bypass active — do NOT use in production');
+
+    const accessToken = this.createDevToken(devEmail);
+    return ok({
+      accessToken,
+      refreshToken: 'dev-refresh-token',
+      expiresIn: 86400, // 24 hours
+    });
+  }
+
+  /** Build a base64url-encoded mock JWT for local dev. */
+  private createDevToken(email: string): string {
+    const header = Buffer.from(JSON.stringify({ alg: 'none', typ: 'JWT' })).toString('base64url');
+    const payload = Buffer.from(
+      JSON.stringify({
+        sub: 'dev-admin-001',
+        email,
+        exp: Math.floor(Date.now() / 1000) + 86400,
+        iss: 'highland-dev',
+      }),
+    ).toString('base64url');
+    return `${header}.${payload}.dev-signature`;
   }
 
   /**
