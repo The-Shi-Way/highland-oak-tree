@@ -1,5 +1,7 @@
 import { useAuthStore } from '~/stores/auth';
-import type { IPostDetail } from '~/composables/usePosts';
+import { useQuery } from '@tanstack/vue-query';
+import type { Ref } from 'vue';
+import type { IPostDetail, IPostListResponse } from '~/composables/usePosts';
 
 function authHeaders(): Record<string, string> {
   const store = useAuthStore();
@@ -9,6 +11,19 @@ function authHeaders(): Record<string, string> {
 function apiBase(): string {
   const config = useRuntimeConfig();
   return config.public.apiBase as string;
+}
+
+/** Fetches all posts (including drafts) for the admin panel. */
+export function useAdminPostList(page: Ref<number>) {
+  return useQuery({
+    queryKey: ['admin-posts', page],
+    queryFn: async (): Promise<IPostListResponse> => {
+      return await $fetch<IPostListResponse>(
+        `${apiBase()}/posts/admin/all?page=${page.value}&limit=20`,
+        { headers: authHeaders() },
+      );
+    },
+  });
 }
 
 export async function fetchPost(id: string): Promise<IPostDetail> {

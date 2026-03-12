@@ -33,6 +33,16 @@ export class PoemController {
     return this.poemService.listPublished();
   }
 
+  // --- Admin endpoints ---
+
+  @Get('admin/all')
+  @UseGuards(CognitoGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'List all poems including drafts (admin)' })
+  async listAll(): Promise<IPoem[]> {
+    return this.poemService.listAll();
+  }
+
   @Get(':id')
   @ApiOperation({ summary: 'Get a published poem by ID (public)' })
   async getById(@Param('id') id: string): Promise<IPoem> {
@@ -43,7 +53,7 @@ export class PoemController {
     return result.value;
   }
 
-  // --- Admin endpoints ---
+  // --- Admin write endpoints ---
 
   @Post()
   @UseGuards(CognitoGuard)
@@ -95,13 +105,5 @@ export class PoemController {
       throw new HttpException(result.error, HttpStatus.NOT_FOUND);
     }
     return result.value;
-  }
-
-  @Get('admin/all')
-  @UseGuards(CognitoGuard)
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'List all poems including drafts (admin)' })
-  async listAll(): Promise<IPoem[]> {
-    return this.poemService.listAll();
   }
 }

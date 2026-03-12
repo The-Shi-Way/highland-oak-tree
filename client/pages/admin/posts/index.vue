@@ -5,9 +5,10 @@
         <FileText :size="22" :stroke-width="1.6" />
         Posts
       </h1>
-      <button class="btn-primary" @click="handleCreate">
-        <Plus :size="16" />
-        New Post
+      <button class="btn-primary" :disabled="creating" @click="handleCreate">
+        <Loader2 v-if="creating" :size="16" class="spin-icon" />
+        <Plus v-else :size="16" />
+        {{ creating ? 'Creating...' : 'New Post' }}
       </button>
     </div>
 
@@ -15,7 +16,7 @@
       <Loader2 :size="20" class="spin-icon" />
       Loading posts...
     </div>
-    <table v-else-if="data && data.data.length > 0" class="posts-table">
+    <table v-else-if="data && data.posts.length > 0" class="posts-table">
       <thead>
         <tr>
           <th>Title</th>
@@ -25,7 +26,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="post in data.data" :key="post.id">
+        <tr v-for="post in data.posts" :key="post.id">
           <td><NuxtLink :to="`/admin/posts/${post.id}`">{{ post.title }}</NuxtLink></td>
           <td><span class="status-badge" :class="post.status">{{ post.status }}</span></td>
           <td class="date-cell">{{ post.publishedAt ? formatDate(post.publishedAt) : '—' }}</td>
@@ -48,21 +49,30 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { FileText, Plus, Loader2, Pencil } from 'lucide-vue-next';
-import { usePostList } from '~/composables/usePosts';
-import { createPost } from '~/composables/useAdminPosts';
+import { useAdminPostList, createPost } from '~/composables/useAdminPosts';
 
 definePageMeta({ layout: 'admin' });
 useHead({ title: 'Posts | Admin' });
 
 const page = ref(1);
-const { data, isLoading } = usePostList(page);
+const { data, isLoading } = useAdminPostList(page);
+const creating = ref(false);
 
 async function handleCreate(): Promise<void> {
-  const post = await createPost({
-    title: 'Untitled Post',
-    body: { type: 'doc', content: [{ type: 'paragraph' }] },
-  });
-  navigateTo(`/admin/posts/${post.id}`);
+  if (creating.value) return;
+  creating.value = true;
+  try {
+    const post = await createPost({
+      title: 'Untitled Post',
+      body: { type: 'doc', content: [{ type: 'paragraph' }] },
+    });
+    navigateTo(`/admin/posts/${post.id}`);
+  } catch (e) {
+    console.error('Failed to create post:', e);
+    alert('Failed to create post. Check the console for details.');
+  } finally {
+    creating.value = false;
+  }
 }
 
 function formatDate(dateStr: string): string {

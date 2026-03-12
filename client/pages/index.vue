@@ -18,7 +18,7 @@
         </div>
         <template v-else-if="data">
           <article
-            v-for="post in data.data"
+            v-for="post in data.posts"
             :key="post.id"
             class="post-card"
           >
@@ -62,7 +62,7 @@
             </div>
           </article>
 
-          <div v-if="data.data.length === 0" class="empty-state">
+          <div v-if="data.posts.length === 0" class="empty-state">
             <BookOpen :size="32" :stroke-width="1.2" />
             <p>No posts found{{ selectedTag ? ` for tag "${selectedTag}"` : '' }}.</p>
           </div>

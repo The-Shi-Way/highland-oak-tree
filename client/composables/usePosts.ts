@@ -14,7 +14,7 @@ export interface IPostListItem {
 }
 
 export interface IPostListResponse {
-  data: IPostListItem[];
+  posts: IPostListItem[];
   total: number;
   page: number;
   limit: number;

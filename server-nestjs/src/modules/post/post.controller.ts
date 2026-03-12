@@ -35,6 +35,16 @@ export class PostController {
     return this.postService.listPublished(query.page, query.limit, query.tag);
   }
 
+  // --- Admin read endpoint (must be before :slug) ---
+
+  @Get('admin/all')
+  @UseGuards(CognitoGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'List all posts including drafts (admin)' })
+  async listAll(@Query() query: PostListQueryDto): Promise<IPostListResult> {
+    return this.postService.listAll(query.page, query.limit);
+  }
+
   @Get(':slug')
   @ApiOperation({ summary: 'Get published post by slug (public)' })
   async getBySlug(@Param('slug') slug: string): Promise<IPost> {
@@ -111,13 +121,5 @@ export class PostController {
       throw new HttpException(result.error, HttpStatus.NOT_FOUND);
     }
     return result.value;
-  }
-
-  @Get('admin/all')
-  @UseGuards(CognitoGuard)
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'List all posts including drafts (admin)' })
-  async listAll(@Query() query: PostListQueryDto): Promise<IPostListResult> {
-    return this.postService.listAll(query.page, query.limit);
   }
 }

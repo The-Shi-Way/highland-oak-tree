@@ -1,5 +1,6 @@
 import { useAuthStore } from '~/stores/auth';
-import type { IPoemDetail } from '~/composables/usePoems';
+import { useQuery } from '@tanstack/vue-query';
+import type { IPoemDetail, IPoemListItem } from '~/composables/usePoems';
 
 function authHeaders(): Record<string, string> {
   const store = useAuthStore();
@@ -9,6 +10,19 @@ function authHeaders(): Record<string, string> {
 function apiBase(): string {
   const config = useRuntimeConfig();
   return config.public.apiBase as string;
+}
+
+/** Fetches all poems (including drafts) for the admin panel. */
+export function useAdminPoemList() {
+  return useQuery({
+    queryKey: ['admin-poems'],
+    queryFn: async (): Promise<IPoemListItem[]> => {
+      return await $fetch<IPoemListItem[]>(
+        `${apiBase()}/poems/admin/all`,
+        { headers: authHeaders() },
+      );
+    },
+  });
 }
 
 export async function fetchPoem(id: string): Promise<IPoemDetail> {

@@ -5,9 +5,10 @@
         <Feather :size="22" :stroke-width="1.6" />
         Poems
       </h1>
-      <button class="btn-primary" @click="handleCreate">
-        <Plus :size="16" />
-        New Poem
+      <button class="btn-primary" :disabled="creating" @click="handleCreate">
+        <Loader2 v-if="creating" :size="16" class="spin-icon" />
+        <Plus v-else :size="16" />
+        {{ creating ? 'Creating...' : 'New Poem' }}
       </button>
     </div>
 
@@ -39,21 +40,31 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue';
 import { Feather, Plus, Loader2, Pencil } from 'lucide-vue-next';
-import { usePoemList } from '~/composables/usePoems';
-import { createPoem } from '~/composables/useAdminPoems';
+import { useAdminPoemList, createPoem } from '~/composables/useAdminPoems';
 
 definePageMeta({ layout: 'admin' });
 useHead({ title: 'Poems | Admin' });
 
-const { data, isLoading } = usePoemList();
+const { data, isLoading } = useAdminPoemList();
+const creating = ref(false);
 
 async function handleCreate(): Promise<void> {
-  const poem = await createPoem({
-    title: 'Untitled Poem',
-    body: { type: 'doc', content: [{ type: 'paragraph' }] },
-  });
-  navigateTo(`/admin/poems/${poem.id}`);
+  if (creating.value) return;
+  creating.value = true;
+  try {
+    const poem = await createPoem({
+      title: 'Untitled Poem',
+      body: { type: 'doc', content: [{ type: 'paragraph' }] },
+    });
+    navigateTo(`/admin/poems/${poem.id}`);
+  } catch (e) {
+    console.error('Failed to create poem:', e);
+    alert('Failed to create poem. Check the console for details.');
+  } finally {
+    creating.value = false;
+  }
 }
 </script>
 
