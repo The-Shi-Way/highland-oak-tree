@@ -6,12 +6,48 @@ interface IAuthState {
   expiresAt: number | null;
 }
 
+interface ICookiePayload {
+  accessToken: string;
+  refreshToken: string;
+  expiresAt: number;
+}
+
+function readCookie(): ICookiePayload | null {
+  if (typeof document === 'undefined') return null;
+  const match = document.cookie
+    .split('; ')
+    .find((c) => c.startsWith('highland-auth='));
+  if (!match) return null;
+  try {
+    return JSON.parse(decodeURIComponent(match.split('=').slice(1).join('='))) as ICookiePayload;
+  } catch {
+    return null;
+  }
+}
+
+function writeCookie(payload: ICookiePayload | null): void {
+  if (typeof document === 'undefined') return;
+  if (payload) {
+    const value = encodeURIComponent(JSON.stringify(payload));
+    document.cookie = `highland-auth=${value}; path=/; max-age=86400; SameSite=Lax`;
+  } else {
+    document.cookie = 'highland-auth=; path=/; max-age=0';
+  }
+}
+
 export const useAuthStore = defineStore('auth', {
-  state: (): IAuthState => ({
-    accessToken: null,
-    refreshToken: null,
-    expiresAt: null,
-  }),
+  state: (): IAuthState => {
+    // Hydrate from cookie on creation
+    const saved = readCookie();
+    if (saved && saved.expiresAt > Date.now()) {
+      return {
+        accessToken: saved.accessToken,
+        refreshToken: saved.refreshToken,
+        expiresAt: saved.expiresAt,
+      };
+    }
+    return { accessToken: null, refreshToken: null, expiresAt: null };
+  },
 
   getters: {
     isAuthenticated: (state): boolean => {
@@ -24,42 +60,14 @@ export const useAuthStore = defineStore('auth', {
       this.accessToken = accessToken;
       this.refreshToken = refreshToken;
       this.expiresAt = Date.now() + expiresIn * 1000;
-      this.persistToCookie();
+      writeCookie({ accessToken, refreshToken, expiresAt: this.expiresAt });
     },
 
     clearTokens(): void {
       this.accessToken = null;
       this.refreshToken = null;
       this.expiresAt = null;
-      this.persistToCookie();
-    },
-
-    /** Restore tokens from cookie on app init (works in SSR + client). */
-    hydrate(): void {
-      const cookie = useCookie<IAuthState | null>('highland-auth', { default: () => null });
-      if (cookie.value) {
-        this.accessToken = cookie.value.accessToken;
-        this.refreshToken = cookie.value.refreshToken;
-        this.expiresAt = cookie.value.expiresAt;
-      }
-    },
-
-    /** Persist current state to a cookie (httpOnly=false so client JS can read). */
-    persistToCookie(): void {
-      const cookie = useCookie<IAuthState | null>('highland-auth', {
-        maxAge: 86400,
-        path: '/',
-        sameSite: 'lax',
-      });
-      if (this.accessToken) {
-        cookie.value = {
-          accessToken: this.accessToken,
-          refreshToken: this.refreshToken,
-          expiresAt: this.expiresAt,
-        };
-      } else {
-        cookie.value = null;
-      }
+      writeCookie(null);
     },
   },
 });
