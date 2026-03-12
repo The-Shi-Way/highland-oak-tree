@@ -1,0 +1,27 @@
+{
+  "name": "ai-blog-platform",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Personal AI-powered blog platform",
+  "scripts": {
+    "dev:server": "pnpm --filter server-nestjs run start:dev",
+    "dev:client": "pnpm --filter client run dev",
+    "build": "pnpm -r run build",
+    "test": "pnpm -r run test",
+    "lint": "pnpm -r run lint"
+  },
+  "engines": {
+    "node": ">=22.0.0",
+    "pnpm": ">=9.0.0"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@nestjs/core",
+      "@parcel/watcher",
+      "esbuild",
+      "sharp",
+      "unrs-resolver",
+      "vue-demi"
+    ]
+  }
+}

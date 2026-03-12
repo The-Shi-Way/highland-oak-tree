@@ -1,0 +1,36 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+.nuxt/
+.output/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Test coverage
+coverage/
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Cache
+.cache/
+
+# Terraform
+infra/.terraform/
+infra/*.tfstate
+infra/*.tfstate.backup
+infra/.terraform.lock.hcl
+
+# IDE
+.idea/
+*.swp
+*.swo

@@ -1,0 +1,12 @@
+node_modules
+dist
+.env*
+.git
+coverage
+*.spec.ts
+*.property.spec.ts
+*.e2e-spec.ts
+jest.config.ts
+.eslintrc.js
+.prettierrc
+README.md
