@@ -1,11 +1,20 @@
 <template>
   <div class="admin-posts">
     <div class="page-header">
-      <h1>Posts</h1>
-      <button class="btn-primary" @click="handleCreate">+ New Post</button>
+      <h1>
+        <FileText :size="22" :stroke-width="1.6" />
+        Posts
+      </h1>
+      <button class="btn-primary" @click="handleCreate">
+        <Plus :size="16" />
+        New Post
+      </button>
     </div>
 
-    <div v-if="isLoading" class="loading-state">Loading posts...</div>
+    <div v-if="isLoading" class="loading-state">
+      <Loader2 :size="20" class="spin-icon" />
+      Loading posts...
+    </div>
     <table v-else-if="data && data.data.length > 0" class="posts-table">
       <thead>
         <tr>
@@ -21,17 +30,24 @@
           <td><span class="status-badge" :class="post.status">{{ post.status }}</span></td>
           <td class="date-cell">{{ post.publishedAt ? formatDate(post.publishedAt) : '—' }}</td>
           <td>
-            <NuxtLink :to="`/admin/posts/${post.id}`" class="action-link">Edit</NuxtLink>
+            <NuxtLink :to="`/admin/posts/${post.id}`" class="action-link">
+              <Pencil :size="14" />
+              Edit
+            </NuxtLink>
           </td>
         </tr>
       </tbody>
     </table>
-    <p v-else class="empty-state">No posts yet. Create your first one.</p>
+    <p v-else class="empty-state">
+      <FileText :size="28" :stroke-width="1.2" />
+      No posts yet. Create your first one.
+    </p>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import { FileText, Plus, Loader2, Pencil } from 'lucide-vue-next';
 import { usePostList } from '~/composables/usePosts';
 import { createPost } from '~/composables/useAdminPosts';
 
@@ -62,59 +78,107 @@ function formatDate(dateStr: string): string {
   margin-bottom: 1.5rem;
 }
 
-.page-header h1 { font-size: 1.6rem; color: #1a202c; margin: 0; }
-
-.btn-primary {
-  padding: 0.5rem 1rem;
-  background: #1a4731;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 0.9rem;
+.page-header h1 {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.6rem;
+  color: #111827;
+  margin: 0;
 }
 
-.btn-primary:hover { background: #22543d; }
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.5rem 1rem;
+  background: linear-gradient(135deg, #1a4731, #22543d);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.88rem;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.btn-primary:hover { background: linear-gradient(135deg, #22543d, #276749); box-shadow: 0 2px 8px rgba(26, 71, 49, 0.2); }
 
 .posts-table {
   width: 100%;
   border-collapse: collapse;
   background: white;
-  border-radius: 8px;
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.02);
 }
 
 .posts-table th {
   text-align: left;
   padding: 0.75rem 1rem;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   text-transform: uppercase;
-  color: #718096;
-  background: #f7fafc;
-  border-bottom: 1px solid #edf2f7;
+  letter-spacing: 0.06em;
+  color: #6b7280;
+  background: #f9fafb;
+  border-bottom: 1px solid #f3f4f6;
 }
 
 .posts-table td {
-  padding: 0.65rem 1rem;
-  border-bottom: 1px solid #edf2f7;
-  font-size: 0.9rem;
+  padding: 0.7rem 1rem;
+  border-bottom: 1px solid #f3f4f6;
+  font-size: 0.88rem;
 }
 
-.posts-table a { color: #2d3748; text-decoration: none; font-weight: 500; }
+.posts-table tr:last-child td { border-bottom: none; }
+
+.posts-table a { color: #1f2937; text-decoration: none; font-weight: 500; transition: color 0.2s; }
 .posts-table a:hover { color: #1a4731; }
 
 .status-badge {
-  font-size: 0.75rem;
-  padding: 0.15rem 0.5rem;
+  font-size: 0.72rem;
+  padding: 0.18rem 0.55rem;
   border-radius: 999px;
+  font-weight: 500;
 }
-.status-badge.draft { background: #fefcbf; color: #744210; }
-.status-badge.published { background: #c6f6d5; color: #22543d; }
-.status-badge.archived { background: #e2e8f0; color: #4a5568; }
+.status-badge.draft { background: #fef9c3; color: #854d0e; }
+.status-badge.published { background: #dcfce7; color: #166534; }
+.status-badge.archived { background: #f1f5f9; color: #475569; }
 
-.date-cell { color: #a0aec0; }
-.action-link { font-size: 0.85rem; color: #1a4731; }
+.date-cell { color: #9ca3af; font-size: 0.82rem; }
+.action-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.84rem;
+  color: #1a4731;
+}
 
-.loading-state, .empty-state { text-align: center; padding: 3rem; color: #718096; }
+.loading-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 3rem;
+  color: #6b7280;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  text-align: center;
+  padding: 3rem;
+  color: #9ca3af;
+}
+
+.spin-icon {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
 </style>

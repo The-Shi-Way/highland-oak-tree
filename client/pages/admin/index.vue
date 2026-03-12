@@ -1,28 +1,52 @@
 <template>
   <div class="dashboard">
-    <h1>Dashboard</h1>
+    <h1>
+      <LayoutDashboard :size="24" :stroke-width="1.6" />
+      Dashboard
+    </h1>
 
     <section class="stats-grid" aria-label="Content statistics">
       <div class="stat-card">
-        <span class="stat-label">Posts</span>
-        <span class="stat-value">{{ stats?.posts.total ?? '—' }}</span>
-        <span class="stat-detail">{{ stats?.posts.published ?? 0 }} published · {{ stats?.posts.draft ?? 0 }} draft</span>
+        <div class="stat-icon-wrap posts-icon">
+          <FileText :size="20" />
+        </div>
+        <div class="stat-body">
+          <span class="stat-label">Posts</span>
+          <span class="stat-value">{{ stats?.posts.total ?? '—' }}</span>
+          <span class="stat-detail">{{ stats?.posts.published ?? 0 }} published · {{ stats?.posts.draft ?? 0 }} draft</span>
+        </div>
       </div>
       <div class="stat-card">
-        <span class="stat-label">Poems</span>
-        <span class="stat-value">{{ stats?.poems.total ?? '—' }}</span>
-        <span class="stat-detail">{{ stats?.poems.published ?? 0 }} published · {{ stats?.poems.draft ?? 0 }} draft</span>
+        <div class="stat-icon-wrap poems-icon">
+          <Feather :size="20" />
+        </div>
+        <div class="stat-body">
+          <span class="stat-label">Poems</span>
+          <span class="stat-value">{{ stats?.poems.total ?? '—' }}</span>
+          <span class="stat-detail">{{ stats?.poems.published ?? 0 }} published · {{ stats?.poems.draft ?? 0 }} draft</span>
+        </div>
       </div>
       <div class="stat-card">
-        <span class="stat-label">Media</span>
-        <span class="stat-value">{{ stats?.media.total ?? '—' }}</span>
-        <span class="stat-detail">total assets</span>
+        <div class="stat-icon-wrap media-icon">
+          <ImageIcon :size="20" />
+        </div>
+        <div class="stat-body">
+          <span class="stat-label">Media</span>
+          <span class="stat-value">{{ stats?.media.total ?? '—' }}</span>
+          <span class="stat-detail">total assets</span>
+        </div>
       </div>
     </section>
 
     <section class="recent-section" aria-label="Recent items">
-      <h2>Recently Modified</h2>
-      <div v-if="recentLoading" class="loading-state">Loading...</div>
+      <h2>
+        <Clock :size="18" />
+        Recently Modified
+      </h2>
+      <div v-if="recentLoading" class="loading-state">
+        <Loader2 :size="20" class="spin-icon" />
+        Loading...
+      </div>
       <table v-else-if="recent && recent.length > 0" class="recent-table">
         <thead>
           <tr>
@@ -37,18 +61,31 @@
             <td>
               <NuxtLink :to="editLink(item)">{{ item.title }}</NuxtLink>
             </td>
-            <td><span class="type-badge">{{ item.contentType }}</span></td>
+            <td>
+              <span class="type-badge">
+                <FileText v-if="item.contentType === 'post'" :size="12" />
+                <Feather v-else :size="12" />
+                {{ item.contentType }}
+              </span>
+            </td>
             <td><span class="status-badge" :class="item.status">{{ item.status }}</span></td>
             <td class="date-cell">{{ formatDate(item.updatedAt) }}</td>
           </tr>
         </tbody>
       </table>
-      <p v-else class="empty-state">No content yet. Start by creating a post or poem.</p>
+      <div v-else class="empty-state">
+        <PenLine :size="24" :stroke-width="1.3" />
+        <p>No content yet. Start by creating a post or poem.</p>
+      </div>
     </section>
   </div>
 </template>
 
 <script setup lang="ts">
+import {
+  LayoutDashboard, FileText, Feather, ImageIcon,
+  Clock, Loader2, PenLine,
+} from 'lucide-vue-next';
 import { useDashboardStats, useDashboardRecent, type IRecentItem } from '~/composables/useDashboard';
 
 definePageMeta({ layout: 'admin' });
@@ -70,14 +107,17 @@ function formatDate(dateStr: string): string {
 
 <style scoped>
 .dashboard h1 {
-  font-size: 1.8rem;
-  color: #1a202c;
-  margin: 0 0 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.7rem;
+  color: #111827;
+  margin: 0 0 1.75rem;
 }
 
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 1rem;
   margin-bottom: 2.5rem;
 }
@@ -85,34 +125,74 @@ function formatDate(dateStr: string): string {
 .stat-card {
   background: white;
   padding: 1.25rem;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  transition: box-shadow 0.2s;
+}
+
+.stat-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+.stat-icon-wrap {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.posts-icon {
+  background: #eff6ff;
+  color: #3b82f6;
+}
+
+.poems-icon {
+  background: #f0fdf4;
+  color: #22c55e;
+}
+
+.media-icon {
+  background: #fef3c7;
+  color: #f59e0b;
+}
+
+.stat-body {
   display: flex;
   flex-direction: column;
 }
 
 .stat-label {
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: #718096;
+  color: #6b7280;
 }
 
 .stat-value {
-  font-size: 2rem;
+  font-size: 1.85rem;
   font-weight: 700;
-  color: #1a202c;
-  margin: 0.25rem 0;
+  color: #111827;
+  margin: 0.1rem 0;
+  line-height: 1.2;
 }
 
 .stat-detail {
-  font-size: 0.8rem;
-  color: #a0aec0;
+  font-size: 0.78rem;
+  color: #9ca3af;
 }
 
 .recent-section h2 {
-  font-size: 1.2rem;
-  color: #2d3748;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 1.15rem;
+  color: #1f2937;
   margin: 0 0 1rem;
 }
 
@@ -120,32 +200,37 @@ function formatDate(dateStr: string): string {
   width: 100%;
   border-collapse: collapse;
   background: white;
-  border-radius: 8px;
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
 }
 
 .recent-table th {
   text-align: left;
   padding: 0.75rem 1rem;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: #718096;
-  border-bottom: 1px solid #edf2f7;
-  background: #f7fafc;
+  letter-spacing: 0.06em;
+  color: #6b7280;
+  border-bottom: 1px solid #f3f4f6;
+  background: #f9fafb;
 }
 
 .recent-table td {
-  padding: 0.65rem 1rem;
-  border-bottom: 1px solid #edf2f7;
-  font-size: 0.9rem;
+  padding: 0.7rem 1rem;
+  border-bottom: 1px solid #f3f4f6;
+  font-size: 0.88rem;
+}
+
+.recent-table tr:last-child td {
+  border-bottom: none;
 }
 
 .recent-table a {
-  color: #2d3748;
+  color: #1f2937;
   text-decoration: none;
   font-weight: 500;
+  transition: color 0.2s;
 }
 
 .recent-table a:hover {
@@ -153,30 +238,58 @@ function formatDate(dateStr: string): string {
 }
 
 .type-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
   font-size: 0.75rem;
   text-transform: capitalize;
-  color: #4a5568;
+  color: #4b5563;
 }
 
 .status-badge {
-  font-size: 0.75rem;
-  padding: 0.15rem 0.5rem;
+  font-size: 0.72rem;
+  padding: 0.18rem 0.55rem;
   border-radius: 999px;
+  font-weight: 500;
 }
 
-.status-badge.draft { background: #fefcbf; color: #744210; }
-.status-badge.published { background: #c6f6d5; color: #22543d; }
-.status-badge.archived { background: #e2e8f0; color: #4a5568; }
+.status-badge.draft { background: #fef9c3; color: #854d0e; }
+.status-badge.published { background: #dcfce7; color: #166534; }
+.status-badge.archived { background: #f1f5f9; color: #475569; }
 
 .date-cell {
-  color: #a0aec0;
-  font-size: 0.85rem;
+  color: #9ca3af;
+  font-size: 0.82rem;
 }
 
-.loading-state,
-.empty-state {
-  text-align: center;
+.loading-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
   padding: 2rem;
-  color: #718096;
+  color: #6b7280;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  text-align: center;
+  padding: 2.5rem;
+  color: #9ca3af;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.spin-icon {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 </style>

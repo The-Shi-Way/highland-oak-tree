@@ -1,6 +1,9 @@
 <template>
   <div class="post-editor">
-    <div v-if="loading" class="loading-state">Loading post...</div>
+    <div v-if="loading" class="loading-state">
+      <Loader2 :size="20" class="spin-icon" />
+      Loading post...
+    </div>
     <template v-else-if="post">
       <div class="editor-header">
         <input
@@ -12,19 +15,29 @@
         <div class="editor-actions">
           <span class="status-badge" :class="post.status">{{ post.status }}</span>
           <button class="btn-secondary" @click="handleSave" :disabled="saving">
+            <Save :size="14" />
             {{ saving ? 'Saving...' : 'Save Draft' }}
           </button>
           <button
             v-if="post.status === 'draft'"
             class="btn-primary"
             @click="handlePublish"
-          >Publish</button>
+          >
+            <Send :size="14" />
+            Publish
+          </button>
           <button
             v-if="post.status === 'published'"
             class="btn-secondary"
             @click="handleUnpublish"
-          >Unpublish</button>
-          <button class="btn-danger" @click="handleDelete">Delete</button>
+          >
+            <EyeOff :size="14" />
+            Unpublish
+          </button>
+          <button class="btn-danger" @click="handleDelete">
+            <Trash2 :size="14" />
+            Delete
+          </button>
         </div>
       </div>
 
@@ -60,6 +73,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
+import { Save, Send, EyeOff, Trash2, Loader2 } from 'lucide-vue-next';
 import {
   fetchPost,
   savePost,
@@ -176,47 +190,62 @@ async function handleDelete(): Promise<void> {
 }
 
 .btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
   padding: 0.45rem 0.9rem;
-  background: #1a4731;
+  background: linear-gradient(135deg, #1a4731, #22543d);
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
-  font-size: 0.85rem;
+  font-size: 0.84rem;
+  font-weight: 500;
+  transition: all 0.2s;
 }
-.btn-primary:hover { background: #22543d; }
+.btn-primary:hover { background: linear-gradient(135deg, #22543d, #276749); box-shadow: 0 2px 8px rgba(26, 71, 49, 0.2); }
 
 .btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
   padding: 0.45rem 0.9rem;
   background: white;
-  color: #4a5568;
-  border: 1px solid #e2e8f0;
-  border-radius: 6px;
+  color: #4b5563;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
   cursor: pointer;
-  font-size: 0.85rem;
+  font-size: 0.84rem;
+  transition: all 0.2s;
 }
-.btn-secondary:hover { background: #f7fafc; }
+.btn-secondary:hover { background: #f9fafb; border-color: #d1d5db; }
 .btn-secondary:disabled { opacity: 0.5; cursor: not-allowed; }
 
 .btn-danger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
   padding: 0.45rem 0.9rem;
   background: white;
-  color: #e53e3e;
-  border: 1px solid #fed7d7;
-  border-radius: 6px;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
   cursor: pointer;
-  font-size: 0.85rem;
+  font-size: 0.84rem;
+  transition: all 0.2s;
 }
-.btn-danger:hover { background: #fff5f5; }
+.btn-danger:hover { background: #fef2f2; }
 
 .status-badge {
-  font-size: 0.7rem;
-  padding: 0.15rem 0.5rem;
+  font-size: 0.68rem;
+  padding: 0.18rem 0.55rem;
   border-radius: 999px;
   text-transform: uppercase;
+  font-weight: 500;
+  letter-spacing: 0.04em;
 }
-.status-badge.draft { background: #fefcbf; color: #744210; }
-.status-badge.published { background: #c6f6d5; color: #22543d; }
+.status-badge.draft { background: #fef9c3; color: #854d0e; }
+.status-badge.published { background: #dcfce7; color: #166534; }
 
 .editor-meta {
   display: grid;
@@ -249,5 +278,15 @@ async function handleDelete(): Promise<void> {
   border-color: #1a4731;
 }
 
-.loading-state { text-align: center; padding: 3rem; color: #718096; }
+.loading-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 3rem;
+  color: #6b7280;
+}
+
+.spin-icon { animation: spin 1s linear infinite; }
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 </style>

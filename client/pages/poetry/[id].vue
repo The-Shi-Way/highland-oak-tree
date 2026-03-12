@@ -1,13 +1,21 @@
 <template>
   <div class="poem-view" :class="data ? `theme-${data.theme}` : ''">
-    <div v-if="isLoading" class="loading-state">Loading poem...</div>
+    <div v-if="isLoading" class="loading-state">
+      <span class="loading-text">Loading poem...</span>
+    </div>
     <div v-else-if="isError" class="error-state">
       <h2>Poem not found</h2>
-      <NuxtLink to="/poetry">← Back to poetry</NuxtLink>
+      <NuxtLink to="/poetry" class="back-link-err">
+        <ArrowLeft :size="14" />
+        Back to poetry
+      </NuxtLink>
     </div>
     <article v-else-if="data" class="poem-article">
       <header class="poem-header">
-        <NuxtLink to="/poetry" class="back-link">← Poetry</NuxtLink>
+        <NuxtLink to="/poetry" class="back-link">
+          <ArrowLeft :size="14" />
+          Poetry
+        </NuxtLink>
         <h1>{{ data.title }}</h1>
         <time v-if="data.publishedAt" :datetime="data.publishedAt">
           {{ formatDate(data.publishedAt) }}
@@ -21,6 +29,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
+import { ArrowLeft } from 'lucide-vue-next';
 import { usePoemById } from '~/composables/usePoems';
 
 const route = useRoute();
@@ -104,14 +113,28 @@ function formatDate(dateStr: string): string {
 }
 
 .back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
   font-size: 0.85rem;
   text-decoration: none;
   opacity: 0.7;
-  transition: opacity 0.2s;
+  transition: all 0.2s;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
 .back-link:hover {
   opacity: 1;
+  gap: 0.45rem;
+}
+
+.back-link-err {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: #1a4731;
+  text-decoration: none;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
 .poem-header h1 {

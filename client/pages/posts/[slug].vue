@@ -4,14 +4,20 @@
     <div v-else-if="isError" class="error-state">
       <h2>Post not found</h2>
       <p>The post you're looking for doesn't exist or has been unpublished.</p>
-      <NuxtLink to="/">← Back to blog</NuxtLink>
+      <NuxtLink to="/" class="back-link">
+        <ArrowLeft :size="14" />
+        Back to blog
+      </NuxtLink>
     </div>
     <article v-else-if="data" class="post-article">
       <header class="post-header">
         <div class="post-meta">
-          <time v-if="data.publishedAt" :datetime="data.publishedAt">
-            {{ formatDate(data.publishedAt) }}
-          </time>
+          <span class="meta-item">
+            <Calendar :size="14" />
+            <time v-if="data.publishedAt" :datetime="data.publishedAt">
+              {{ formatDate(data.publishedAt) }}
+            </time>
+          </span>
         </div>
         <h1>{{ data.title }}</h1>
         <div v-if="data.tags.length" class="post-tags">
@@ -21,6 +27,7 @@
             :to="`/?tag=${tag}`"
             class="tag-chip"
           >
+            <Tag :size="11" />
             {{ tag }}
           </NuxtLink>
         </div>
@@ -36,7 +43,10 @@
       <div class="post-body" v-html="renderBody(data.body)" />
 
       <footer class="post-footer">
-        <NuxtLink to="/">← Back to blog</NuxtLink>
+        <NuxtLink to="/" class="back-link">
+          <ArrowLeft :size="14" />
+          Back to blog
+        </NuxtLink>
       </footer>
     </article>
   </div>
@@ -44,6 +54,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
+import { ArrowLeft, Calendar, Tag, Clock } from 'lucide-vue-next';
 import { usePostBySlug } from '~/composables/usePosts';
 
 const route = useRoute();
@@ -168,8 +179,18 @@ function escapeHtml(str: string): string {
 }
 
 .post-meta {
-  color: #718096;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  color: #7a8694;
   font-size: 0.9rem;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
 }
 
 .post-tags {
@@ -180,14 +201,17 @@ function escapeHtml(str: string): string {
 }
 
 .tag-chip {
-  display: inline-block;
-  padding: 0.2rem 0.6rem;
-  border: 1px solid #cbd5e0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.22rem 0.65rem;
+  border: 1px solid #d1d5db;
   border-radius: 999px;
-  font-size: 0.8rem;
-  color: #4a5568;
+  font-size: 0.78rem;
+  color: #4b5563;
   text-decoration: none;
   transition: all 0.2s;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
 .tag-chip:hover {
@@ -248,24 +272,33 @@ function escapeHtml(str: string): string {
   border-top: 1px solid #e2e8f0;
 }
 
-.post-footer a {
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
   color: #1a4731;
   text-decoration: none;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 0.9rem;
+  transition: gap 0.2s;
+}
+
+.back-link:hover {
+  gap: 0.5rem;
 }
 
 .loading-state,
 .error-state {
   text-align: center;
   padding: 4rem 0;
-  color: #718096;
+  color: #7a8694;
 }
 
 .error-state h2 {
-  color: #2d3748;
+  color: #1e293b;
 }
 
-.error-state a {
-  color: #1a4731;
-  text-decoration: none;
+.error-state p {
+  margin-bottom: 1.5rem;
 }
 </style>

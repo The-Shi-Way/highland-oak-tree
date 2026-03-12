@@ -1,22 +1,35 @@
 <template>
   <div class="poem-editor">
-    <div v-if="loading" class="loading-state">Loading poem...</div>
+    <div v-if="loading" class="loading-state">
+      <Loader2 :size="20" class="spin-icon" />
+      Loading poem...
+    </div>
     <template v-else-if="poem">
       <div class="editor-header">
         <input v-model="poem.title" class="title-input" placeholder="Poem title" @blur="handleSave" />
         <div class="editor-actions">
           <span class="status-badge" :class="poem.status">{{ poem.status }}</span>
           <button class="btn-secondary" @click="handleSave" :disabled="saving">
+            <Save :size="14" />
             {{ saving ? 'Saving...' : 'Save' }}
           </button>
-          <button v-if="poem.status === 'draft'" class="btn-primary" @click="handlePublish">Publish</button>
-          <button class="btn-danger" @click="handleDelete">Delete</button>
+          <button v-if="poem.status === 'draft'" class="btn-primary" @click="handlePublish">
+            <Send :size="14" />
+            Publish
+          </button>
+          <button class="btn-danger" @click="handleDelete">
+            <Trash2 :size="14" />
+            Delete
+          </button>
         </div>
       </div>
 
       <div class="editor-meta">
         <div class="meta-field">
-          <label for="theme">Theme</label>
+          <label for="theme">
+            <Palette :size="13" />
+            Theme
+          </label>
           <select id="theme" v-model="poem.theme" @change="handleSave">
             <option value="classic">Classic</option>
             <option value="modern">Modern</option>
@@ -35,6 +48,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
+import { Save, Send, Trash2, Loader2, Palette } from 'lucide-vue-next';
 import { fetchPoem, savePoem, publishPoem, deletePoem } from '~/composables/useAdminPoems';
 import TipTapEditor from '~/components/content/TipTapEditor.vue';
 
@@ -91,22 +105,38 @@ async function handleDelete(): Promise<void> {
 <style scoped>
 .poem-editor { max-width: 900px; }
 .editor-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap; }
-.title-input { flex: 1; font-size: 1.5rem; font-weight: 600; border: none; border-bottom: 2px solid transparent; padding: 0.5rem 0; font-family: 'Georgia', serif; color: #1a202c; font-style: italic; min-width: 200px; }
+.title-input { flex: 1; font-size: 1.5rem; font-weight: 600; border: none; border-bottom: 2px solid transparent; padding: 0.5rem 0; font-family: 'Georgia', serif; color: #111827; font-style: italic; min-width: 200px; transition: border-color 0.2s; }
 .title-input:focus { outline: none; border-bottom-color: #1a4731; }
 .editor-actions { display: flex; align-items: center; gap: 0.5rem; }
-.btn-primary { padding: 0.45rem 0.9rem; background: #1a4731; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.85rem; }
-.btn-primary:hover { background: #22543d; }
-.btn-secondary { padding: 0.45rem 0.9rem; background: white; color: #4a5568; border: 1px solid #e2e8f0; border-radius: 6px; cursor: pointer; font-size: 0.85rem; }
-.btn-secondary:hover { background: #f7fafc; }
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 0.3rem;
+  padding: 0.45rem 0.9rem; background: linear-gradient(135deg, #1a4731, #22543d); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 0.84rem; font-weight: 500; transition: all 0.2s;
+}
+.btn-primary:hover { background: linear-gradient(135deg, #22543d, #276749); box-shadow: 0 2px 8px rgba(26, 71, 49, 0.2); }
+.btn-secondary {
+  display: inline-flex; align-items: center; gap: 0.3rem;
+  padding: 0.45rem 0.9rem; background: white; color: #4b5563; border: 1px solid #e5e7eb; border-radius: 8px; cursor: pointer; font-size: 0.84rem; transition: all 0.2s;
+}
+.btn-secondary:hover { background: #f9fafb; border-color: #d1d5db; }
 .btn-secondary:disabled { opacity: 0.5; cursor: not-allowed; }
-.btn-danger { padding: 0.45rem 0.9rem; background: white; color: #e53e3e; border: 1px solid #fed7d7; border-radius: 6px; cursor: pointer; font-size: 0.85rem; }
-.btn-danger:hover { background: #fff5f5; }
-.status-badge { font-size: 0.7rem; padding: 0.15rem 0.5rem; border-radius: 999px; text-transform: uppercase; }
-.status-badge.draft { background: #fefcbf; color: #744210; }
-.status-badge.published { background: #c6f6d5; color: #22543d; }
+.btn-danger {
+  display: inline-flex; align-items: center; gap: 0.3rem;
+  padding: 0.45rem 0.9rem; background: white; color: #dc2626; border: 1px solid #fecaca; border-radius: 8px; cursor: pointer; font-size: 0.84rem; transition: all 0.2s;
+}
+.btn-danger:hover { background: #fef2f2; }
+.status-badge { font-size: 0.68rem; padding: 0.18rem 0.55rem; border-radius: 999px; text-transform: uppercase; font-weight: 500; letter-spacing: 0.04em; }
+.status-badge.draft { background: #fef9c3; color: #854d0e; }
+.status-badge.published { background: #dcfce7; color: #166534; }
 .editor-meta { margin-bottom: 1rem; }
-.meta-field label { display: block; font-size: 0.8rem; color: #718096; margin-bottom: 0.25rem; }
-.meta-field select { padding: 0.5rem; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 0.9rem; font-family: inherit; }
+.meta-field label {
+  display: flex; align-items: center; gap: 0.3rem;
+  font-size: 0.8rem; color: #6b7280; margin-bottom: 0.25rem;
+}
+.meta-field select { padding: 0.5rem; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 0.88rem; font-family: inherit; transition: border-color 0.2s; }
 .meta-field select:focus { outline: none; border-color: #1a4731; }
-.loading-state { text-align: center; padding: 3rem; color: #718096; }
+.loading-state {
+  display: flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 3rem; color: #6b7280;
+}
+.spin-icon { animation: spin 1s linear infinite; }
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 </style>
