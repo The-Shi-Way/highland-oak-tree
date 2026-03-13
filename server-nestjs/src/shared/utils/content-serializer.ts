@@ -1,6 +1,6 @@
 /**
  * Content serialization utilities for TipTap JSON documents.
- * Used by PostService and PoemService for storage/retrieval.
+ * Used by LeafService for storage/retrieval.
  *
  * The round-trip property is critical:
  *   deserializeContent(serializeContent(content)) ≡ content

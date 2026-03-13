@@ -7,9 +7,9 @@ export class AiReviewDto {
   @MinLength(1)
   content!: string;
 
-  @ApiProperty({ enum: ['post', 'poem'] })
-  @IsIn(['post', 'poem'])
-  contentType!: 'post' | 'poem';
+  @ApiProperty({ enum: ['prose', 'blossom', 'fruit', 'seed'] })
+  @IsIn(['prose', 'blossom', 'fruit', 'seed'])
+  leafType!: 'prose' | 'blossom' | 'fruit' | 'seed';
 }
 
 export class AiRewriteDto {
@@ -18,9 +18,9 @@ export class AiRewriteDto {
   @MinLength(1)
   content!: string;
 
-  @ApiProperty({ enum: ['post', 'poem'] })
-  @IsIn(['post', 'poem'])
-  contentType!: 'post' | 'poem';
+  @ApiProperty({ enum: ['prose', 'blossom', 'fruit', 'seed'] })
+  @IsIn(['prose', 'blossom', 'fruit', 'seed'])
+  leafType!: 'prose' | 'blossom' | 'fruit' | 'seed';
 
   @ApiPropertyOptional({ example: 'Selected portion to rewrite' })
   @IsOptional()

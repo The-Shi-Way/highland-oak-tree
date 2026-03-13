@@ -19,22 +19,24 @@ function authHeaders(): Record<string, string> {
   return store.accessToken ? { Authorization: `Bearer ${store.accessToken}` } : {};
 }
 
+export type LeafType = 'prose' | 'blossom' | 'fruit' | 'seed';
+
 export async function reviewContent(
   content: string,
-  contentType: 'post' | 'poem',
+  leafType: LeafType,
 ): Promise<IAiReviewResult> {
   const config = useRuntimeConfig();
   const apiBase = config.public.apiBase as string;
   return await $fetch<IAiReviewResult>(`${apiBase}/ai/review`, {
     method: 'POST',
     headers: authHeaders(),
-    body: { content, contentType },
+    body: { content, leafType },
   });
 }
 
 export async function rewriteContent(
   content: string,
-  contentType: 'post' | 'poem',
+  leafType: LeafType,
   selectedText: string,
 ): Promise<IAiRewriteResult> {
   const config = useRuntimeConfig();
@@ -42,6 +44,6 @@ export async function rewriteContent(
   return await $fetch<IAiRewriteResult>(`${apiBase}/ai/rewrite`, {
     method: 'POST',
     headers: authHeaders(),
-    body: { content, contentType, selectedText },
+    body: { content, leafType, selectedText },
   });
 }

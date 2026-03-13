@@ -1,5 +1,5 @@
 /**
- * Content lifecycle states — used by both Post and Poem entities.
+ * Content lifecycle states — used by the Leaf entity.
  */
 export type ContentStatus = 'draft' | 'published' | 'archived';
 

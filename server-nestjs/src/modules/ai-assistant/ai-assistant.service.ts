@@ -5,7 +5,7 @@ import {
   InvokeModelCommand,
 } from '@aws-sdk/client-bedrock-runtime';
 
-import { Result, ok, err, DomainError } from '@shared/types';
+import { Result, ok, err, DomainError, LeafType } from '@shared/types';
 import {
   IAiReviewResult,
   IAiRewriteResult,
@@ -14,11 +14,11 @@ import {
 
 const SYSTEM_PROMPT = `You are a writing assistant for "The Highland Oak Tree" blog, written by an AI engineer and consultant. 
 Maintain the author's personal voice — technical yet approachable, with a blend of engineering precision and business insight.
-For poems, respect the creative intent and artistic expression.
+For blossom (poetry) leaves, respect the creative intent and artistic expression.
 When reviewing, provide specific, actionable suggestions. Return your response as valid JSON.`;
 
-const REVIEW_PROMPT = (contentType: string, content: string): string =>
-  `Review the following ${contentType} for clarity, tone, grammar, and structure. 
+const REVIEW_PROMPT = (leafType: string, content: string): string =>
+  `Review the following ${leafType} leaf for clarity, tone, grammar, and structure. 
 Return a JSON array of suggestions, each with "original" (the text to change), "suggested" (the improved text), and "reason" (why this change improves the writing).
 Only suggest changes that meaningfully improve the content. Return an empty array if no changes are needed.
 
@@ -27,8 +27,8 @@ ${content}
 
 Respond with ONLY valid JSON: { "suggestions": [...] }`;
 
-const REWRITE_PROMPT = (contentType: string, content: string, selectedText?: string): string =>
-  `Rewrite the following ${selectedText ? 'selected portion of a' : ''} ${contentType} to improve clarity and flow while preserving the original meaning and the author's voice.
+const REWRITE_PROMPT = (leafType: string, content: string, selectedText?: string): string =>
+  `Rewrite the following ${selectedText ? 'selected portion of a' : ''} ${leafType} leaf to improve clarity and flow while preserving the original meaning and the author's voice.
 ${selectedText ? `\nSelected text to rewrite:\n${selectedText}\n\nFull context:\n` : ''}${content}
 
 Respond with ONLY valid JSON: { "rewritten": "..." }`;
@@ -51,13 +51,13 @@ export class AiAssistantService {
 
   async review(
     content: string,
-    contentType: 'post' | 'poem',
+    leafType: LeafType,
   ): Promise<Result<IAiReviewResult, DomainError>> {
     if (this.isDevMode()) {
-      return ok(this.mockReview(content, contentType));
+      return ok(this.mockReview(content, leafType));
     }
 
-    const prompt = REVIEW_PROMPT(contentType, content);
+    const prompt = REVIEW_PROMPT(leafType, content);
 
     const response = await this.invokeModel(prompt);
     if (!response.ok) return response;
@@ -82,14 +82,14 @@ export class AiAssistantService {
 
   async rewrite(
     content: string,
-    contentType: 'post' | 'poem',
+    leafType: LeafType,
     selectedText?: string,
   ): Promise<Result<IAiRewriteResult, DomainError>> {
     if (this.isDevMode()) {
       return ok(this.mockRewrite(selectedText ?? content));
     }
 
-    const prompt = REWRITE_PROMPT(contentType, content, selectedText);
+    const prompt = REWRITE_PROMPT(leafType, content, selectedText);
 
     const response = await this.invokeModel(prompt);
     if (!response.ok) return response;
@@ -173,7 +173,7 @@ export class AiAssistantService {
     return this.config.get<string>('NODE_ENV') === 'development';
   }
 
-  private mockReview(content: string, contentType: 'post' | 'poem'): IAiReviewResult {
+  private mockReview(content: string, leafType: LeafType): IAiReviewResult {
     this.logger.log('[DEV] Returning mock AI review suggestions');
     const words = content.split(/\s+/).filter(Boolean);
     const suggestions: IAiSuggestion[] = [];
@@ -183,7 +183,7 @@ export class AiAssistantService {
       suggestions.push({
         original: snippet,
         suggested: `${snippet} — refined`,
-        reason: contentType === 'poem'
+        reason: leafType === 'blossom'
           ? 'Consider adding a more evocative opening to draw the reader in.'
           : 'The opening could be more engaging to hook the reader immediately.',
       });

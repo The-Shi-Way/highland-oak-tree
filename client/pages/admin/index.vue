@@ -93,7 +93,7 @@
       </table>
       <div v-else class="empty-state">
         <PenLine :size="24" :stroke-width="1.3" />
-        <p>No content yet. Start by creating a post or poem.</p>
+        <p>No content yet. Start by creating a leaf.</p>
       </div>
     </section>
   </div>

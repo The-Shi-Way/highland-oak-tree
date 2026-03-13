@@ -63,7 +63,7 @@
 
       <AiSuggestionPanel
         :content="plainTextContent"
-        :content-type="leaf.leafType"
+        :leaf-type="leaf.leafType"
         @accept="handleAcceptSuggestion"
       />
     </template>
@@ -89,12 +89,15 @@ definePageMeta({ layout: 'admin' });
 const route = useRoute();
 const leafId = route.params.id as string;
 
+type LeafType = 'prose' | 'blossom' | 'fruit' | 'seed';
+type GrowthStage = 'seedling' | 'budding' | 'mature' | 'evergreen';
+
 interface IEditableLeaf {
   title: string;
   body: Record<string, unknown>;
   status: string;
-  leafType: string;
-  growth: string;
+  leafType: LeafType;
+  growth: GrowthStage;
   excerpt: string;
   vines: string[];
   featuredImage: string | null;
@@ -134,8 +137,8 @@ onMounted(async () => {
       title: data.title,
       body: data.body,
       status: data.status,
-      leafType: data.leafType,
-      growth: data.growth,
+      leafType: data.leafType as LeafType,
+      growth: data.growth as GrowthStage,
       excerpt: data.excerpt ?? '',
       vines: data.vines,
       featuredImage: data.featuredImage,

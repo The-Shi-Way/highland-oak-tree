@@ -45,7 +45,7 @@ import { reviewContent, type IAiSuggestion } from '~/composables/useAi';
 
 const props = defineProps<{
   content: string;
-  contentType: 'post' | 'poem';
+  leafType: 'prose' | 'blossom' | 'fruit' | 'seed';
 }>();
 
 defineEmits<{
@@ -60,7 +60,7 @@ async function handleReview(): Promise<void> {
   loading.value = true;
   error.value = '';
   try {
-    const result = await reviewContent(props.content, props.contentType);
+    const result = await reviewContent(props.content, props.leafType);
     suggestions.value = result.suggestions;
   } catch {
     error.value = 'AI service is currently unavailable. Your editor still works fine — try again later.';

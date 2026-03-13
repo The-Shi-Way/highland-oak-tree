@@ -23,7 +23,7 @@ export class AiAssistantController {
   @Post('review')
   @ApiOperation({ summary: 'Get AI suggestions for content improvement' })
   async review(@Body() dto: AiReviewDto): Promise<IAiReviewResult> {
-    const result = await this.aiService.review(dto.content, dto.contentType);
+    const result = await this.aiService.review(dto.content, dto.leafType);
     if (!result.ok) {
       throw new HttpException(result.error, HttpStatus.BAD_GATEWAY);
     }
@@ -35,7 +35,7 @@ export class AiAssistantController {
   async rewrite(@Body() dto: AiRewriteDto): Promise<IAiRewriteResult> {
     const result = await this.aiService.rewrite(
       dto.content,
-      dto.contentType,
+      dto.leafType,
       dto.selectedText,
     );
     if (!result.ok) {

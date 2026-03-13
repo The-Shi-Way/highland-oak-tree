@@ -28,8 +28,8 @@ Scopes: `server`, `client`, `infra`, `ci`
 
 Examples:
 ```
-feat(server): add post publish/unpublish endpoints
-fix(client): correct poetry theme rendering on mobile
+feat(server): add leaf publish/unpublish endpoints
+fix(client): correct blossom layout rendering on mobile
 ci: add staging deployment workflow
 ```
 

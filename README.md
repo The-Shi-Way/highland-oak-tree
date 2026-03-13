@@ -1,6 +1,6 @@
 # The Highland Oak Tree
 
-A personal blog platform for an AI engineer & consultant, featuring rich content editing, poetry with creative themes, AI-assisted writing via AWS Bedrock, and media management.
+A personal blog platform built around a living tree metaphor — content grows as Leaves on four Branches (Prose, Blossom, Fruit, Seed), connected by thematic Vines, with seasonal visual theming and botanical taxonomy.
 
 ## Tech Stack
 
@@ -11,11 +11,34 @@ A personal blog platform for an AI engineer & consultant, featuring rich content
 - **Storage**: S3 + CloudFront CDN for media assets
 - **Infrastructure**: Terraform on AWS (ECS Fargate, RDS, ElastiCache, CloudFront)
 
+## Content Model
+
+All content is a **Leaf** with a type (branch), growth stage, seasonal assignment, and vine tags:
+
+| Branch | Description | Icon |
+|--------|-------------|------|
+| Prose | Long-form essays and articles | 🍃 |
+| Blossom | Poetry and verse | 🌸 |
+| Fruit | Curated links, reviews, recommendations | 🍎 |
+| Seed | Quick thoughts and micro-posts | 🌱 |
+
+**Growth stages**: Seedling → Budding → Mature → Evergreen
+**Seasons**: Spring (Mar-May), Summer (Jun-Aug), Autumn (Sep-Nov), Winter (Dec-Feb) — auto-computed from publish date, drives site-wide color palette
+
 ## Project Structure
 
 ```
 ├── server-nestjs/     # NestJS API backend
+│   └── src/modules/
+│       ├── leaf/      # Unified content (Leaf entity, service, controller)
+│       ├── grove/     # Blogroll (Grove entries)
+│       ├── search/    # Full-text search across leaves
+│       ├── seo/       # Sitemap, RSS feeds (main + per-branch)
+│       └── ai-assistant/ # Bedrock-powered writing assistant
 ├── client/            # Nuxt 3 frontend
+│   ├── pages/         # Branch landings, leaf detail, canopy, forest floor, etc.
+│   ├── composables/   # useLeaves, useLeaf, useSeason, useGrove, etc.
+│   └── components/    # LeafCard, TreeNavigation, GrowthRings, FallingLeaves
 ├── infra/             # Terraform infrastructure modules
 ├── .github/workflows/ # CI/CD pipelines
 └── podman-compose.yml # Local development containers

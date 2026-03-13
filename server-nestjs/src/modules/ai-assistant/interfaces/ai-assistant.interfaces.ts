@@ -10,7 +10,7 @@ export interface IAiReviewResult {
 
 export interface IAiReviewRequest {
   content: string;
-  contentType: 'post' | 'poem';
+  leafType: 'prose' | 'blossom' | 'fruit' | 'seed';
   instruction: 'review' | 'rewrite';
   selectedText?: string;
 }
