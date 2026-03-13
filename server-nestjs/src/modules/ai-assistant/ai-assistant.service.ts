@@ -53,6 +53,10 @@ export class AiAssistantService {
     content: string,
     contentType: 'post' | 'poem',
   ): Promise<Result<IAiReviewResult, DomainError>> {
+    if (this.isDevMode()) {
+      return ok(this.mockReview(content, contentType));
+    }
+
     const prompt = REVIEW_PROMPT(contentType, content);
 
     const response = await this.invokeModel(prompt);
@@ -81,6 +85,10 @@ export class AiAssistantService {
     contentType: 'post' | 'poem',
     selectedText?: string,
   ): Promise<Result<IAiRewriteResult, DomainError>> {
+    if (this.isDevMode()) {
+      return ok(this.mockRewrite(selectedText ?? content));
+    }
+
     const prompt = REWRITE_PROMPT(contentType, content, selectedText);
 
     const response = await this.invokeModel(prompt);
@@ -159,5 +167,53 @@ export class AiAssistantService {
         message: 'AI service is temporarily unavailable',
       });
     }
+  }
+
+  private isDevMode(): boolean {
+    return this.config.get<string>('NODE_ENV') === 'development';
+  }
+
+  private mockReview(content: string, contentType: 'post' | 'poem'): IAiReviewResult {
+    this.logger.log('[DEV] Returning mock AI review suggestions');
+    const words = content.split(/\s+/).filter(Boolean);
+    const suggestions: IAiSuggestion[] = [];
+
+    if (words.length > 5) {
+      const snippet = words.slice(0, 4).join(' ');
+      suggestions.push({
+        original: snippet,
+        suggested: `${snippet} — refined`,
+        reason: contentType === 'poem'
+          ? 'Consider adding a more evocative opening to draw the reader in.'
+          : 'The opening could be more engaging to hook the reader immediately.',
+      });
+    }
+
+    if (words.length > 15) {
+      const mid = Math.floor(words.length / 2);
+      const midSnippet = words.slice(mid, mid + 3).join(' ');
+      suggestions.push({
+        original: midSnippet,
+        suggested: `${midSnippet} (clarified)`,
+        reason: 'This passage could be clearer — consider simplifying the phrasing.',
+      });
+    }
+
+    if (suggestions.length === 0) {
+      suggestions.push({
+        original: content.slice(0, 30) || 'your content',
+        suggested: (content.slice(0, 30) || 'your content') + ', enhanced',
+        reason: '[Dev mock] This is a sample suggestion. In production, Claude will provide real feedback.',
+      });
+    }
+
+    return { suggestions };
+  }
+
+  private mockRewrite(text: string): IAiRewriteResult {
+    this.logger.log('[DEV] Returning mock AI rewrite');
+    return {
+      rewritten: `[Rewritten] ${text.trim()}\n\n(This is a dev-mode mock rewrite. In production, Claude will provide a genuine rewrite.)`,
+    };
   }
 }

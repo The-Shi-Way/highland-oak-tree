@@ -13,13 +13,13 @@
           <LayoutDashboard :size="18" />
           <span>Dashboard</span>
         </NuxtLink>
-        <NuxtLink to="/admin/posts" class="nav-item">
-          <FileText :size="18" />
-          <span>Posts</span>
+        <NuxtLink to="/admin/leaves" class="nav-item">
+          <Leaf :size="18" />
+          <span>Leaves</span>
         </NuxtLink>
-        <NuxtLink to="/admin/poems" class="nav-item">
-          <Feather :size="18" />
-          <span>Poems</span>
+        <NuxtLink to="/admin/grove" class="nav-item">
+          <TreePine :size="18" />
+          <span>Grove</span>
         </NuxtLink>
         <NuxtLink to="/admin/media" class="nav-item">
           <ImageIcon :size="18" />
@@ -45,7 +45,7 @@
 </template>
 
 <script setup lang="ts">
-import { TreePine, LayoutDashboard, FileText, Feather, ImageIcon, ExternalLink, LogOut } from 'lucide-vue-next';
+import { TreePine, LayoutDashboard, Leaf, ImageIcon, ExternalLink, LogOut } from 'lucide-vue-next';
 import { useAuth } from '~/composables/useAuth';
 
 definePageMeta({ middleware: 'auth' });

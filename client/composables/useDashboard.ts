@@ -1,16 +1,23 @@
 import { useQuery } from '@tanstack/vue-query';
 import { useAuthStore } from '~/stores/auth';
 
+export type LeafType = 'prose' | 'blossom' | 'fruit' | 'seed';
+
 export interface IDashboardStats {
-  posts: { total: number; published: number; draft: number; archived: number };
-  poems: { total: number; published: number; draft: number };
+  leaves: {
+    total: number;
+    published: number;
+    draft: number;
+    archived: number;
+    byType: Record<LeafType, number>;
+  };
   media: { total: number };
 }
 
 export interface IRecentItem {
   id: string;
   title: string;
-  contentType: 'post' | 'poem';
+  leafType: LeafType;
   status: string;
   updatedAt: string;
 }

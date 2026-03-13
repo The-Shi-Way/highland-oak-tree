@@ -1,3 +1,5 @@
+import { LeafType } from '@shared/types';
+
 export interface ISitemapEntry {
   loc: string;
   lastmod: string;
@@ -8,4 +10,18 @@ export interface ISitemapEntry {
 export interface ISitemapResult {
   xml: string;
   entryCount: number;
+}
+
+export interface IRssFeedItem {
+  title: string;
+  link: string;
+  description: string;
+  leafType: LeafType;
+  pubDate: string;
+  guid: string;
+}
+
+export interface IRssFeedResult {
+  xml: string;
+  itemCount: number;
 }

@@ -2,53 +2,43 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { Result, ok, err, DomainError } from '@shared/types';
-import { Post } from '@modules/post/entities/post.entity';
-import { Poem } from '@modules/poem/entities/poem.entity';
+import { Result, ok, err, DomainError, LeafType } from '@shared/types';
+import { Leaf } from '@modules/leaf/entities/leaf.entity';
 import { MediaAsset } from '@modules/media/entities/media-asset.entity';
 import { IDashboardStats, IRecentItem } from './interfaces/dashboard.interfaces';
+
+const LEAF_TYPES: readonly LeafType[] = ['prose', 'blossom', 'fruit', 'seed'] as const;
 
 @Injectable()
 export class DashboardService {
   constructor(
-    @InjectRepository(Post)
-    private readonly postRepo: Repository<Post>,
-    @InjectRepository(Poem)
-    private readonly poemRepo: Repository<Poem>,
+    @InjectRepository(Leaf)
+    private readonly leafRepo: Repository<Leaf>,
     @InjectRepository(MediaAsset)
     private readonly mediaRepo: Repository<MediaAsset>,
   ) {}
 
   async getStats(): Promise<Result<IDashboardStats, DomainError>> {
     try {
-      const [postTotal, postPublished, postDraft, postArchived] =
-        await Promise.all([
-          this.postRepo.count(),
-          this.postRepo.count({ where: { status: 'published' } }),
-          this.postRepo.count({ where: { status: 'draft' } }),
-          this.postRepo.count({ where: { status: 'archived' } }),
-        ]);
-
-      const [poemTotal, poemPublished, poemDraft] = await Promise.all([
-        this.poemRepo.count(),
-        this.poemRepo.count({ where: { status: 'published' } }),
-        this.poemRepo.count({ where: { status: 'draft' } }),
+      const [total, published, draft, archived] = await Promise.all([
+        this.leafRepo.count(),
+        this.leafRepo.count({ where: { status: 'published' } }),
+        this.leafRepo.count({ where: { status: 'draft' } }),
+        this.leafRepo.count({ where: { status: 'archived' } }),
       ]);
+
+      const byTypeEntries = await Promise.all(
+        LEAF_TYPES.map(async (lt) => {
+          const count = await this.leafRepo.count({ where: { leafType: lt } });
+          return [lt, count] as const;
+        }),
+      );
+      const byType = Object.fromEntries(byTypeEntries) as Record<LeafType, number>;
 
       const mediaTotal = await this.mediaRepo.count();
 
       return ok({
-        posts: {
-          total: postTotal,
-          published: postPublished,
-          draft: postDraft,
-          archived: postArchived,
-        },
-        poems: {
-          total: poemTotal,
-          published: poemPublished,
-          draft: poemDraft,
-        },
+        leaves: { total, published, draft, archived, byType },
         media: { total: mediaTotal },
       });
     } catch {
@@ -62,39 +52,21 @@ export class DashboardService {
 
   async getRecentItems(): Promise<Result<IRecentItem[], DomainError>> {
     try {
-      const [recentPosts, recentPoems] = await Promise.all([
-        this.postRepo.find({
-          select: ['id', 'title', 'status', 'updatedAt'],
-          order: { updatedAt: 'DESC' },
-          take: 10,
-        }),
-        this.poemRepo.find({
-          select: ['id', 'title', 'status', 'updatedAt'],
-          order: { updatedAt: 'DESC' },
-          take: 10,
-        }),
-      ]);
+      const recentLeaves = await this.leafRepo.find({
+        select: ['id', 'title', 'leafType', 'status', 'updatedAt'],
+        order: { updatedAt: 'DESC' },
+        take: 10,
+      });
 
-      const items: IRecentItem[] = [
-        ...recentPosts.map((p) => ({
-          id: p.id as string,
-          title: p.title,
-          contentType: 'post' as const,
-          status: p.status,
-          updatedAt: p.updatedAt,
-        })),
-        ...recentPoems.map((p) => ({
-          id: p.id as string,
-          title: p.title,
-          contentType: 'poem' as const,
-          status: p.status,
-          updatedAt: p.updatedAt,
-        })),
-      ];
+      const items: IRecentItem[] = recentLeaves.map((leaf) => ({
+        id: leaf.id as string,
+        title: leaf.title,
+        leafType: leaf.leafType,
+        status: leaf.status,
+        updatedAt: leaf.updatedAt,
+      }));
 
-      items.sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime());
-
-      return ok(items.slice(0, 10));
+      return ok(items);
     } catch {
       return err({
         kind: 'external_service' as const,

@@ -4,7 +4,9 @@ import { type Ref, computed } from 'vue';
 export interface ISearchResultItem {
   title: string;
   excerpt: string;
-  contentType: 'post' | 'poem';
+  leafType: string;
+  season: string;
+  growth: string;
   slug: string;
   publishedAt: string;
 }

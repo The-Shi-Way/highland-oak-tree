@@ -10,7 +10,7 @@ export class SearchController {
   constructor(private readonly searchService: SearchService) {}
 
   @Get()
-  @ApiOperation({ summary: 'Search published posts and poems (public)' })
+  @ApiOperation({ summary: 'Search published leaves (public)' })
   async search(@Query('q') query: string): Promise<ISearchResponse> {
     return this.searchService.search(query ?? '');
   }

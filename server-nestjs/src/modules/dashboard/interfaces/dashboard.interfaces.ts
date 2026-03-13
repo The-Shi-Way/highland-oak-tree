@@ -1,16 +1,12 @@
-import { ContentStatus } from '@shared/types';
+import { ContentStatus, LeafType } from '@shared/types';
 
 export interface IDashboardStats {
-  posts: {
+  leaves: {
     total: number;
     published: number;
     draft: number;
     archived: number;
-  };
-  poems: {
-    total: number;
-    published: number;
-    draft: number;
+    byType: Record<LeafType, number>;
   };
   media: {
     total: number;
@@ -20,7 +16,7 @@ export interface IDashboardStats {
 export interface IRecentItem {
   id: string;
   title: string;
-  contentType: 'post' | 'poem';
+  leafType: LeafType;
   status: ContentStatus;
   updatedAt: Date;
 }

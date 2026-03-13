@@ -1,7 +1,11 @@
+import { LeafType, Season, GrowthStage } from '@shared/types';
+
 export interface ISearchResult {
   title: string;
   excerpt: string;
-  contentType: 'post' | 'poem';
+  leafType: LeafType;
+  season: Season;
+  growth: GrowthStage;
   slug: string;
   publishedAt: Date;
 }

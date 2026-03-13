@@ -7,23 +7,31 @@
 
     <section class="stats-grid" aria-label="Content statistics">
       <div class="stat-card">
-        <div class="stat-icon-wrap posts-icon">
-          <FileText :size="20" />
+        <div class="stat-icon-wrap leaves-icon">
+          <Leaf :size="20" />
         </div>
         <div class="stat-body">
-          <span class="stat-label">Posts</span>
-          <span class="stat-value">{{ stats?.posts.total ?? '—' }}</span>
-          <span class="stat-detail">{{ stats?.posts.published ?? 0 }} published · {{ stats?.posts.draft ?? 0 }} draft</span>
+          <span class="stat-label">Leaves</span>
+          <span class="stat-value">{{ stats?.leaves?.total ?? '—' }}</span>
+          <span class="stat-detail">{{ stats?.leaves?.published ?? 0 }} published · {{ stats?.leaves?.draft ?? 0 }} draft</span>
         </div>
       </div>
       <div class="stat-card">
-        <div class="stat-icon-wrap poems-icon">
+        <div class="stat-icon-wrap prose-icon">
+          <FileText :size="20" />
+        </div>
+        <div class="stat-body">
+          <span class="stat-label">Prose</span>
+          <span class="stat-value">{{ stats?.leaves?.byType?.prose ?? '—' }}</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon-wrap blossom-icon">
           <Feather :size="20" />
         </div>
         <div class="stat-body">
-          <span class="stat-label">Poems</span>
-          <span class="stat-value">{{ stats?.poems.total ?? '—' }}</span>
-          <span class="stat-detail">{{ stats?.poems.published ?? 0 }} published · {{ stats?.poems.draft ?? 0 }} draft</span>
+          <span class="stat-label">Blossom</span>
+          <span class="stat-value">{{ stats?.leaves?.byType?.blossom ?? '—' }}</span>
         </div>
       </div>
       <div class="stat-card">
@@ -36,6 +44,18 @@
           <span class="stat-detail">total assets</span>
         </div>
       </div>
+    </section>
+
+    <section class="migration-section" aria-label="Data migration">
+      <h2><ArrowRightLeft :size="18" /> Data Migration</h2>
+      <p class="migration-desc">Migrate legacy posts and poems into the unified Leaf system.</p>
+      <button class="btn-primary" :disabled="migrating" @click="handleMigrate">
+        <Loader2 v-if="migrating" :size="16" class="spin-icon" />
+        {{ migrating ? 'Migrating...' : 'Run Migration' }}
+      </button>
+      <p v-if="migrationResult" class="migration-result">
+        Migrated {{ migrationResult.postsConverted }} posts and {{ migrationResult.poemsConverted }} poems.
+      </p>
     </section>
 
     <section class="recent-section" aria-label="Recent items">
@@ -63,9 +83,7 @@
             </td>
             <td>
               <span class="type-badge">
-                <FileText v-if="item.contentType === 'post'" :size="12" />
-                <Feather v-else :size="12" />
-                {{ item.contentType }}
+                <LeafTypeBadge :leaf-type="item.leafType" />
               </span>
             </td>
             <td><span class="status-badge" :class="item.status">{{ item.status }}</span></td>
@@ -82,20 +100,37 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue';
 import {
-  LayoutDashboard, FileText, Feather, ImageIcon,
-  Clock, Loader2, PenLine,
+  LayoutDashboard, Leaf, FileText, Feather, ImageIcon,
+  Clock, Loader2, PenLine, ArrowRightLeft,
 } from 'lucide-vue-next';
 import { useDashboardStats, useDashboardRecent, type IRecentItem } from '~/composables/useDashboard';
+import { runMigration } from '~/composables/useAdminLeaves';
 
 definePageMeta({ layout: 'admin' });
 useHead({ title: 'Dashboard | Admin' });
 
 const { data: stats } = useDashboardStats();
 const { data: recent, isLoading: recentLoading } = useDashboardRecent();
+const migrating = ref(false);
+const migrationResult = ref<{ postsConverted: number; poemsConverted: number } | null>(null);
+
+async function handleMigrate(): Promise<void> {
+  if (migrating.value) return;
+  if (!window.confirm('This will migrate all posts and poems to leaves. Continue?')) return;
+  migrating.value = true;
+  try {
+    migrationResult.value = await runMigration();
+  } catch (e) {
+    console.error('Migration failed:', e);
+  } finally {
+    migrating.value = false;
+  }
+}
 
 function editLink(item: IRecentItem): string {
-  return item.contentType === 'post' ? `/admin/posts/${item.id}` : `/admin/poems/${item.id}`;
+  return `/admin/leaves/${item.id}`;
 }
 
 function formatDate(dateStr: string): string {
@@ -147,14 +182,19 @@ function formatDate(dateStr: string): string {
   flex-shrink: 0;
 }
 
-.posts-icon {
+.leaves-icon {
+  background: #f0fdf4;
+  color: #22c55e;
+}
+
+.prose-icon {
   background: #eff6ff;
   color: #3b82f6;
 }
 
-.poems-icon {
-  background: #f0fdf4;
-  color: #22c55e;
+.blossom-icon {
+  background: #fdf2f8;
+  color: #ec4899;
 }
 
 .media-icon {
@@ -292,4 +332,46 @@ function formatDate(dateStr: string): string {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+
+.migration-section {
+  margin-top: 2rem;
+  padding: 1.25rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+.migration-section h2 {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 1.15rem;
+  color: #1f2937;
+  margin: 0 0 0.4rem;
+}
+.migration-desc {
+  font-size: 0.85rem;
+  color: #6b7280;
+  margin: 0 0 0.8rem;
+}
+.migration-result {
+  margin-top: 0.6rem;
+  font-size: 0.88rem;
+  color: #166534;
+  font-weight: 500;
+}
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.5rem 1rem;
+  background: linear-gradient(135deg, #1a4731, #22543d);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.88rem;
+  font-weight: 500;
+}
+.btn-primary:hover { background: linear-gradient(135deg, #22543d, #276749); }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
 </style>
