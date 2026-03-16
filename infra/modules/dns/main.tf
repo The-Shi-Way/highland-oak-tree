@@ -1,15 +1,9 @@
 # -----------------------------------------------------------------------------
-# Route 53 Hosted Zone
+# Route 53 Hosted Zone — use existing zone from domain registration
 # -----------------------------------------------------------------------------
-resource "aws_route53_zone" "main" {
+data "aws_route53_zone" "main" {
   count = var.domain_name != "" ? 1 : 0
-
-  name = var.domain_name
-
-  tags = {
-    Project     = var.project
-    Environment = var.environment
-  }
+  name  = var.domain_name
 }
 
 # -----------------------------------------------------------------------------
@@ -44,7 +38,7 @@ resource "aws_route53_record" "cert_validation" {
     }
   } : {}
 
-  zone_id         = aws_route53_zone.main[0].zone_id
+  zone_id         = data.aws_route53_zone.main[0].zone_id
   name            = each.value.name
   type            = each.value.type
   ttl             = 60
@@ -70,7 +64,7 @@ resource "aws_acm_certificate_validation" "main" {
 resource "aws_route53_record" "root_a" {
   count = var.domain_name != "" ? 1 : 0
 
-  zone_id = aws_route53_zone.main[0].zone_id
+  zone_id = data.aws_route53_zone.main[0].zone_id
   name    = var.domain_name
   type    = "A"
 
@@ -85,7 +79,7 @@ resource "aws_route53_record" "root_a" {
 resource "aws_route53_record" "root_aaaa" {
   count = var.domain_name != "" ? 1 : 0
 
-  zone_id = aws_route53_zone.main[0].zone_id
+  zone_id = data.aws_route53_zone.main[0].zone_id
   name    = var.domain_name
   type    = "AAAA"
 
@@ -100,7 +94,7 @@ resource "aws_route53_record" "root_aaaa" {
 resource "aws_route53_record" "www" {
   count = var.domain_name != "" ? 1 : 0
 
-  zone_id = aws_route53_zone.main[0].zone_id
+  zone_id = data.aws_route53_zone.main[0].zone_id
   name    = "www.${var.domain_name}"
   type    = "CNAME"
   ttl     = 300
@@ -111,7 +105,7 @@ resource "aws_route53_record" "www" {
 resource "aws_route53_record" "media" {
   count = var.domain_name != "" ? 1 : 0
 
-  zone_id = aws_route53_zone.main[0].zone_id
+  zone_id = data.aws_route53_zone.main[0].zone_id
   name    = "media.${var.domain_name}"
   type    = "A"
 

@@ -54,7 +54,7 @@ resource "aws_db_instance" "main" {
   db_subnet_group_name   = aws_db_subnet_group.main.name
   vpc_security_group_ids = [aws_security_group.db.id]
 
-  multi_az            = var.environment == "production"
+  multi_az            = false
   skip_final_snapshot = var.environment != "production"
 
   backup_retention_period = var.environment == "production" ? 7 : 1

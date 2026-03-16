@@ -14,7 +14,7 @@ resource "aws_ecs_cluster" "main" {
   name = "${var.project}-${var.environment}"
   setting {
     name  = "containerInsights"
-    value = "enabled"
+    value = "disabled"
   }
 }
 
@@ -59,6 +59,20 @@ resource "aws_iam_role" "ecs_task_execution" {
 resource "aws_iam_role_policy_attachment" "ecs_task_execution" {
   role       = aws_iam_role.ecs_task_execution.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+}
+
+# Allow execution role to read secrets from Secrets Manager
+resource "aws_iam_role_policy" "ecs_exec_secrets" {
+  name = "secrets-access"
+  role = aws_iam_role.ecs_task_execution.id
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect   = "Allow"
+      Action   = ["secretsmanager:GetSecretValue"]
+      Resource = var.db_secret_arn
+    }]
+  })
 }
 
 resource "aws_iam_role" "ecs_task" {
