@@ -3,22 +3,45 @@
     <aside class="admin-sidebar" role="navigation" aria-label="Admin navigation">
       <div class="sidebar-header">
         <NuxtLink to="/admin" class="admin-logo">
-          <TreePine :size="20" :stroke-width="1.8" />
+          <TreeDeciduous :size="20" :stroke-width="1.8" />
           <span>Highland Oak</span>
         </NuxtLink>
         <span class="admin-badge">Admin</span>
       </div>
       <nav class="sidebar-nav">
         <NuxtLink to="/admin" class="nav-item" exact>
-          <LayoutDashboard :size="18" />
+          <Flower :size="18" />
           <span>Dashboard</span>
         </NuxtLink>
         <NuxtLink to="/admin/leaves" class="nav-item">
           <Leaf :size="18" />
-          <span>Leaves</span>
+          <span>All Leaves</span>
+        </NuxtLink>
+        <div class="nav-group">
+          <span class="nav-group-label">Create by type</span>
+          <NuxtLink to="/admin/leaves?create=prose" class="nav-item nav-sub" @click.prevent="quickCreate('prose')">
+            <span class="type-dot prose-dot" />
+            <span>🍃 Prose</span>
+          </NuxtLink>
+          <NuxtLink to="/admin/leaves?create=blossom" class="nav-item nav-sub" @click.prevent="quickCreate('blossom')">
+            <span class="type-dot blossom-dot" />
+            <span>🌸 Blossom</span>
+          </NuxtLink>
+          <NuxtLink to="/admin/leaves?create=fruit" class="nav-item nav-sub" @click.prevent="quickCreate('fruit')">
+            <span class="type-dot fruit-dot" />
+            <span>🍎 Fruit</span>
+          </NuxtLink>
+          <NuxtLink to="/admin/leaves?create=seed" class="nav-item nav-sub" @click.prevent="quickCreate('seed')">
+            <span class="type-dot seed-dot" />
+            <span>🌱 Seed</span>
+          </NuxtLink>
+        </div>
+        <NuxtLink to="/admin/chirps" class="nav-item">
+          <Bird :size="18" />
+          <span>Chirps</span>
         </NuxtLink>
         <NuxtLink to="/admin/grove" class="nav-item">
-          <TreePine :size="18" />
+          <TreeDeciduous :size="18" />
           <span>Grove</span>
         </NuxtLink>
         <NuxtLink to="/admin/media" class="nav-item">
@@ -45,12 +68,32 @@
 </template>
 
 <script setup lang="ts">
-import { TreePine, LayoutDashboard, Leaf, ImageIcon, ExternalLink, LogOut } from 'lucide-vue-next';
+import { ref } from 'vue';
+import { TreeDeciduous, Flower, Leaf, Bird, ImageIcon, ExternalLink, LogOut } from 'lucide-vue-next';
 import { useAuth } from '~/composables/useAuth';
+import { createLeaf } from '~/composables/useAdminLeaves';
 
 definePageMeta({ middleware: 'auth' });
 
 const { logout } = useAuth();
+const creating = ref(false);
+
+async function quickCreate(leafType: string): Promise<void> {
+  if (creating.value) return;
+  creating.value = true;
+  try {
+    const leaf = await createLeaf({
+      title: `Untitled ${leafType.charAt(0).toUpperCase() + leafType.slice(1)}`,
+      body: { type: 'doc', content: [{ type: 'paragraph' }] },
+      leafType,
+    });
+    navigateTo(`/admin/leaves/${leaf.id}`);
+  } catch (e) {
+    console.error('Failed to create leaf:', e);
+  } finally {
+    creating.value = false;
+  }
+}
 
 async function handleLogout(): Promise<void> {
   await logout();
@@ -146,6 +189,31 @@ async function handleLogout(): Promise<void> {
 .sidebar-footer {
   border-top: 1px solid rgba(255, 255, 255, 0.08);
   padding: 0.5rem 0;
+}
+
+.nav-group {
+  padding: 0.25rem 0;
+}
+
+.nav-group-label {
+  display: block;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #64748b;
+  padding: 0.4rem 1.25rem 0.2rem;
+}
+
+.nav-sub {
+  padding-left: 1.6rem;
+  font-size: 0.82rem;
+}
+
+.type-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
 }
 
 .logout-btn {

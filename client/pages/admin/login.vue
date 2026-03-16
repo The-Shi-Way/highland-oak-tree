@@ -2,7 +2,7 @@
   <div class="login-page">
     <div class="login-card">
       <div class="login-brand">
-        <TreePine :size="28" :stroke-width="1.5" class="brand-icon" />
+        <TreeDeciduous :size="28" :stroke-width="1.5" class="brand-icon" />
         <h1>The Highland Oak Tree</h1>
       </div>
       <p class="login-subtitle">
@@ -57,7 +57,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { TreePine, Lock, User, KeyRound, LogIn, Loader2, AlertCircle } from 'lucide-vue-next';
+import { TreeDeciduous, Lock, User, KeyRound, LogIn, Loader2, AlertCircle } from 'lucide-vue-next';
 import { useAuth } from '~/composables/useAuth';
 
 definePageMeta({ layout: false });

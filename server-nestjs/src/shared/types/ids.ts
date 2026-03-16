@@ -7,3 +7,4 @@ export type PoemId = string & { readonly __brand: 'PoemId' };
 export type MediaAssetId = string & { readonly __brand: 'MediaAssetId' };
 export type LeafId = string & { readonly __brand: 'LeafId' };
 export type GroveEntryId = string & { readonly __brand: 'GroveEntryId' };
+export type ChirpId = string & { readonly __brand: 'ChirpId' };

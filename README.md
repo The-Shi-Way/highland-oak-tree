@@ -22,7 +22,7 @@ All content is a **Leaf** with a type (branch), growth stage, seasonal assignmen
 | Fruit | Curated links, reviews, recommendations | 🍎 |
 | Seed | Quick thoughts and micro-posts | 🌱 |
 
-**Growth stages**: Seedling → Budding → Mature → Evergreen
+**Growth stages**: Seedling → Sapling → Mature → Evergreen
 **Seasons**: Spring (Mar-May), Summer (Jun-Aug), Autumn (Sep-Nov), Winter (Dec-Feb) — auto-computed from publish date, drives site-wide color palette
 
 ## Project Structure

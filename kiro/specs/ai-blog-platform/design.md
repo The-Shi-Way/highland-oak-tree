@@ -1,5 +1,7 @@
 # Design Document: AI Blog Platform
 
+> **⚠️ ARCHIVED** — This spec is superseded by [`living-tree-redesign`](../living-tree-redesign/design.md). The Post/Poem dual-entity model described here has been replaced by the unified Leaf content system. Kept for historical reference only.
+
 ## Overview
 
 The AI Blog Platform is a personal publishing system for an AI engineer/consultant, built as a pnpm monorepo with a NestJS backend (`server-nestjs/`) and Vue 3 frontend (`client/`). It supports two content types — blog posts and poems — with multimedia attachments, AI-assisted editing via AWS Bedrock, and public read access without authentication. Admin authentication is handled by Amazon Cognito. Content is stored in PostgreSQL 16, media in S3 with CloudFront CDN, and caching/queuing via Redis 7.

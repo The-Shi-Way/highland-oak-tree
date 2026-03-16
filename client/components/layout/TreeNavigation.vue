@@ -1,8 +1,8 @@
 <template>
-  <header class="tree-header">
+  <header class="tree-header" :class="{ scrolled: isScrolled }">
     <nav class="tree-nav" role="navigation" aria-label="Main navigation">
       <NuxtLink to="/" class="tree-logo">
-        <TreePine :size="22" :stroke-width="1.8" />
+        <TreeDeciduous :size="22" :stroke-width="1.8" />
         <span>The Highland Oak Tree</span>
       </NuxtLink>
 
@@ -17,46 +17,65 @@
         <X v-else :size="22" />
       </button>
 
-      <ul id="nav-menu" class="nav-links" :class="{ open: mobileOpen }">
-        <!-- Branches dropdown -->
-        <li class="nav-dropdown">
-          <button class="nav-link dropdown-trigger" @click="branchesOpen = !branchesOpen">
-            <GitBranch :size="16" />
-            <span>Branches</span>
-            <ChevronDown :size="14" :class="{ rotated: branchesOpen }" />
-          </button>
-          <ul v-show="branchesOpen" class="dropdown-menu">
-            <li><NuxtLink to="/prose" class="dropdown-item" @click="closeAll">🍃 Prose</NuxtLink></li>
-            <li><NuxtLink to="/blossom" class="dropdown-item" @click="closeAll">🌸 Blossom</NuxtLink></li>
-            <li><NuxtLink to="/fruit" class="dropdown-item" @click="closeAll">🍎 Fruit</NuxtLink></li>
-            <li><NuxtLink to="/seed" class="dropdown-item" @click="closeAll">🌱 Seed</NuxtLink></li>
-          </ul>
-        </li>
+      <div class="nav-right">
+        <ul id="nav-menu" class="nav-links" :class="{ open: mobileOpen }">
+          <!-- Branches dropdown -->
+          <li class="nav-dropdown">
+            <button class="nav-link dropdown-trigger" @click="branchesOpen = !branchesOpen">
+              <Shrub :size="16" />
+              <span>Branches</span>
+              <ChevronDown :size="14" :class="{ rotated: branchesOpen }" />
+            </button>
+            <ul class="dropdown-menu" :class="{ 'dropdown-open': branchesOpen }">
+              <li><NuxtLink to="/prose" class="dropdown-item" @click="closeAll">🍃 Prose</NuxtLink></li>
+              <li><NuxtLink to="/blossom" class="dropdown-item" @click="closeAll">🌸 Blossom</NuxtLink></li>
+              <li><NuxtLink to="/fruit" class="dropdown-item" @click="closeAll">🍎 Fruit</NuxtLink></li>
+              <li><NuxtLink to="/seed" class="dropdown-item" @click="closeAll">🌱 Seed</NuxtLink></li>
+            </ul>
+          </li>
 
-        <li><NuxtLink to="/canopy" class="nav-link" @click="closeAll"><Layers :size="16" /><span>Canopy</span></NuxtLink></li>
-        <li><NuxtLink to="/forest-floor" class="nav-link" @click="closeAll"><Archive :size="16" /><span>Forest Floor</span></NuxtLink></li>
-        <li><NuxtLink to="/roots" class="nav-link" @click="closeAll"><Heart :size="16" /><span>Roots</span></NuxtLink></li>
-        <li><NuxtLink to="/grove" class="nav-link" @click="closeAll"><Trees :size="16" /><span>Grove</span></NuxtLink></li>
-        <li><NuxtLink to="/search" class="nav-link" @click="closeAll"><Search :size="16" /><span>Search</span></NuxtLink></li>
-      </ul>
+          <li><NuxtLink to="/canopy" class="nav-link" @click="closeAll"><Leaf :size="16" /><span>Canopy</span></NuxtLink></li>
+          <li><NuxtLink to="/forest-floor" class="nav-link" @click="closeAll"><Flower2 :size="16" /><span>Forest Floor</span></NuxtLink></li>
+          <li><NuxtLink to="/roots" class="nav-link" @click="closeAll"><Sprout :size="16" /><span>Roots</span></NuxtLink></li>
+          <li><NuxtLink to="/grove" class="nav-link" @click="closeAll"><Trees :size="16" /><span>Grove</span></NuxtLink></li>
+          <li><NuxtLink to="/bulletin-board" class="nav-link" @click="closeAll"><Bird :size="16" /><span>Chirps</span></NuxtLink></li>
+          <li><NuxtLink to="/search" class="nav-link" @click="closeAll"><Search :size="16" /><span>Search</span></NuxtLink></li>
+        </ul>
+
+        <span class="journal-stamp" aria-label="Current date, season and time">
+          <span class="stamp-date">{{ journalDate }}</span>
+          <span class="stamp-meta">{{ seasonLabel }} · {{ timeLabel }}</span>
+        </span>
+      </div>
     </nav>
   </header>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import {
-  TreePine, Menu, X, GitBranch, ChevronDown,
-  Layers, Archive, Heart, Trees, Search,
+  TreeDeciduous, Menu, X, Shrub, ChevronDown,
+  Leaf, Flower2, Sprout, Trees, Bird, Search,
 } from 'lucide-vue-next';
+
+const { journalDate, seasonLabel, timeLabel } = useSeason();
 
 const mobileOpen = ref(false);
 const branchesOpen = ref(false);
+const isScrolled = ref(false);
 
 function closeAll(): void {
   mobileOpen.value = false;
   branchesOpen.value = false;
 }
+
+onMounted(() => {
+  const onScroll = (): void => {
+    isScrolled.value = window.scrollY > 60;
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onUnmounted(() => window.removeEventListener('scroll', onScroll));
+});
 </script>
 
 <style scoped>
@@ -68,6 +87,10 @@ function closeAll(): void {
   top: 0;
   z-index: 100;
   backdrop-filter: blur(8px);
+  transition: padding 0.3s ease;
+}
+.tree-header.scrolled {
+  padding: 0.5rem 2rem;
 }
 .tree-nav {
   max-width: 1200px;
@@ -75,6 +98,32 @@ function closeAll(): void {
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.journal-stamp {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-family: var(--font-accent, 'Cormorant Garamond', serif);
+  color: #000000;
+  white-space: nowrap;
+  padding-left: 0.75rem;
+  border-left: 1px solid var(--color-border, #e8e5e0);
+  line-height: 1.3;
+}
+.stamp-date {
+  font-size: 0.78rem;
+  letter-spacing: 0.02em;
+  color: #000000;
+}
+.stamp-meta {
+  font-size: 0.73rem;
+  font-style: italic;
+  color: #1a1a1a;
 }
 .tree-logo {
   display: flex;
@@ -86,6 +135,7 @@ function closeAll(): void {
   text-decoration: none;
   letter-spacing: -0.02em;
   transition: opacity 0.2s;
+  font-family: var(--font-display), 'Fraunces', serif;
 }
 .tree-logo:hover { opacity: 0.85; }
 .mobile-toggle {
@@ -127,6 +177,7 @@ function closeAll(): void {
   color: var(--color-primary, #1a4731);
   background: rgba(26, 71, 49, 0.08);
   font-weight: 500;
+  border-bottom: 2px solid var(--color-primary, #1a4731);
 }
 .nav-dropdown { position: relative; }
 .dropdown-trigger .rotated { transform: rotate(180deg); transition: transform 0.2s; }
@@ -143,6 +194,16 @@ function closeAll(): void {
   box-shadow: 0 4px 16px rgba(0,0,0,0.08);
   min-width: 150px;
   z-index: 200;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, opacity 0.3s ease;
+  pointer-events: none;
+}
+.dropdown-menu.dropdown-open {
+  max-height: 300px;
+  opacity: 1;
+  pointer-events: auto;
 }
 .dropdown-item {
   display: block;
@@ -158,6 +219,8 @@ function closeAll(): void {
 
 @media (max-width: 768px) {
   .mobile-toggle { display: block; }
+  .journal-stamp { display: none; }
+  .nav-right { flex: 1; justify-content: flex-end; }
   .nav-links {
     display: none;
     flex-direction: column;

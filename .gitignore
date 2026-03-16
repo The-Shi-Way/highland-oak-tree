@@ -34,3 +34,6 @@ infra/.terraform.lock.hcl
 .idea/
 *.swp
 *.swo
+
+# Test results
+test-results/

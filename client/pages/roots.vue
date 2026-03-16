@@ -16,7 +16,7 @@
       <p>
         Leaves are connected by <strong>vines</strong> — thematic threads that
         weave across branches. They grow through stages: seedling drafts become
-        budding works, then mature pieces, and eventually evergreen references.
+        sapling works, then mature pieces, and eventually evergreen references.
       </p>
       <p>
         The site changes with the seasons. Colors shift from spring greens to

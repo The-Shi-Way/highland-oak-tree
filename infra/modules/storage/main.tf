@@ -22,6 +22,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "media" {
   rule {
     id     = "transition-to-ia"
     status = "Enabled"
+    filter {}
     transition {
       days          = 90
       storage_class = "STANDARD_IA"
@@ -31,6 +32,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "media" {
   rule {
     id     = "abort-incomplete-uploads"
     status = "Enabled"
+    filter {}
     abort_incomplete_multipart_upload {
       days_after_initiation = 7
     }
@@ -66,6 +68,7 @@ resource "aws_cloudfront_distribution" "media" {
   enabled             = true
   default_root_object = ""
   price_class         = "PriceClass_100"
+  aliases             = var.media_subdomain != "" ? [var.media_subdomain] : []
 
   origin {
     domain_name = aws_s3_bucket.media.bucket_regional_domain_name
@@ -96,7 +99,19 @@ resource "aws_cloudfront_distribution" "media" {
     geo_restriction { restriction_type = "none" }
   }
 
-  viewer_certificate {
-    cloudfront_default_certificate = var.domain_name == "" ? true : false
+  dynamic "viewer_certificate" {
+    for_each = var.certificate_arn != "" ? [1] : []
+    content {
+      acm_certificate_arn      = var.certificate_arn
+      ssl_support_method       = "sni-only"
+      minimum_protocol_version = "TLSv1.2_2021"
+    }
+  }
+
+  dynamic "viewer_certificate" {
+    for_each = var.certificate_arn != "" ? [] : [1]
+    content {
+      cloudfront_default_certificate = true
+    }
   }
 }

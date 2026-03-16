@@ -1,7 +1,7 @@
 <template>
   <div class="admin-grove">
     <div class="page-header">
-      <h1><TreePine :size="22" :stroke-width="1.6" /> Grove</h1>
+      <h1><TreeDeciduous :size="22" :stroke-width="1.6" /> Grove</h1>
       <button class="btn-primary" @click="showForm = true">
         <Plus :size="16" /> Add Entry
       </button>
@@ -48,7 +48,7 @@
 
 <script setup lang="ts">
 import { ref, reactive } from 'vue';
-import { TreePine, Plus, Pencil, Trash2, Loader2 } from 'lucide-vue-next';
+import { TreeDeciduous, Plus, Pencil, Trash2, Loader2 } from 'lucide-vue-next';
 import { useGroveList, type IGroveEntry } from '~/composables/useGrove';
 import { createGroveEntry, updateGroveEntry, deleteGroveEntry } from '~/composables/useAdminGrove';
 import { useQueryClient } from '@tanstack/vue-query';

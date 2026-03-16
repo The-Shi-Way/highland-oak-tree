@@ -147,7 +147,7 @@ resource "aws_ecs_task_definition" "server" {
     environment = [
       { name = "REDIS_HOST", value = var.redis_endpoint },
       { name = "S3_BUCKET", value = var.media_bucket },
-      { name = "CDN_BASE_URL", value = "https://${var.cdn_domain}" },
+      { name = "CDN_BASE_URL", value = var.domain_name != "" ? "https://media.${var.domain_name}" : "https://${var.cdn_domain}" },
       { name = "NODE_ENV", value = var.environment }
     ]
   }])
@@ -181,7 +181,7 @@ resource "aws_ecs_task_definition" "client" {
       }
     }
     environment = [
-      { name = "NUXT_PUBLIC_API_BASE", value = "https://${var.cdn_domain}/api" },
+      { name = "NUXT_PUBLIC_API_BASE", value = var.domain_name != "" ? "https://${var.domain_name}/api" : "https://${var.cdn_domain}/api" },
       { name = "NODE_ENV", value = var.environment }
     ]
   }])
@@ -202,6 +202,15 @@ resource "aws_ecs_service" "server" {
     security_groups  = [aws_security_group.ecs_tasks.id]
     assign_public_ip = false
   }
+
+  dynamic "load_balancer" {
+    for_each = var.server_target_group_arn != "" ? [1] : []
+    content {
+      target_group_arn = var.server_target_group_arn
+      container_name   = "server"
+      container_port   = 3001
+    }
+  }
 }
 
 resource "aws_ecs_service" "client" {
@@ -218,6 +227,15 @@ resource "aws_ecs_service" "client" {
     subnets          = var.private_subnet_ids
     security_groups  = [aws_security_group.ecs_tasks.id]
     assign_public_ip = false
+  }
+
+  dynamic "load_balancer" {
+    for_each = var.client_target_group_arn != "" ? [1] : []
+    content {
+      target_group_arn = var.client_target_group_arn
+      container_name   = "client"
+      container_port   = 3000
+    }
   }
 }
 

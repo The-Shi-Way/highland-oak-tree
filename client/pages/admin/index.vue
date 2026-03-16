@@ -1,7 +1,7 @@
 <template>
   <div class="dashboard">
     <h1>
-      <LayoutDashboard :size="24" :stroke-width="1.6" />
+      <Flower :size="24" :stroke-width="1.6" />
       Dashboard
     </h1>
 
@@ -18,7 +18,7 @@
       </div>
       <div class="stat-card">
         <div class="stat-icon-wrap prose-icon">
-          <FileText :size="20" />
+          <Scroll :size="20" />
         </div>
         <div class="stat-body">
           <span class="stat-label">Prose</span>
@@ -27,7 +27,7 @@
       </div>
       <div class="stat-card">
         <div class="stat-icon-wrap blossom-icon">
-          <Feather :size="20" />
+          <Flower2 :size="20" />
         </div>
         <div class="stat-body">
           <span class="stat-label">Blossom</span>
@@ -92,7 +92,7 @@
         </tbody>
       </table>
       <div v-else class="empty-state">
-        <PenLine :size="24" :stroke-width="1.3" />
+        <Sprout :size="24" :stroke-width="1.3" />
         <p>No content yet. Start by creating a leaf.</p>
       </div>
     </section>
@@ -102,8 +102,8 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import {
-  LayoutDashboard, Leaf, FileText, Feather, ImageIcon,
-  Clock, Loader2, PenLine, ArrowRightLeft,
+  Flower, Leaf, Scroll, Flower2, ImageIcon,
+  Clock, Loader2, Sprout, ArrowRightLeft,
 } from 'lucide-vue-next';
 import { useDashboardStats, useDashboardRecent, type IRecentItem } from '~/composables/useDashboard';
 import { runMigration } from '~/composables/useAdminLeaves';

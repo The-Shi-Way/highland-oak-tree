@@ -1,10 +1,11 @@
 import { useQuery } from '@tanstack/vue-query';
 import { type Ref, computed } from 'vue';
+import type { LeafType } from '~/composables/useLeaves';
 
 export interface ISearchResultItem {
   title: string;
   excerpt: string;
-  leafType: string;
+  leafType: LeafType;
   season: string;
   growth: string;
   slug: string;

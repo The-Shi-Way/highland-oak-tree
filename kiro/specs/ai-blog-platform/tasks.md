@@ -1,5 +1,7 @@
 # Implementation Plan: AI Blog Platform
 
+> **⚠️ ARCHIVED** — This spec is superseded by [`living-tree-redesign`](../living-tree-redesign/tasks.md). The Post/Poem dual-entity model described here has been replaced by the unified Leaf content system. Kept for historical reference only.
+
 ## Overview
 
 Incremental build of the AI Blog Platform as a pnpm monorepo with NestJS backend (`server-nestjs/`) and Nuxt 3 frontend (`client/`). Tasks are ordered to establish shared types and infrastructure first, then domain modules with their property tests, then frontend pages, and finally integration wiring.

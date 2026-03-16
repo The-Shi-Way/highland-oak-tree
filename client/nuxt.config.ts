@@ -1,11 +1,24 @@
 export default defineNuxtConfig({
   devtools: { enabled: true },
 
-  css: ['~/assets/css/seasons.css', '~/assets/css/texture.css'],
+  components: {
+    dirs: [
+      { path: '~/components', pathPrefix: false },
+    ],
+  },
+
+  css: [
+    '~/assets/css/typography.css',
+    '~/assets/css/animations.css',
+    '~/assets/css/seasons.css',
+    '~/assets/css/texture.css',
+  ],
 
   modules: ['@pinia/nuxt'],
 
   app: {
+    pageTransition: { name: 'page', mode: 'out-in' },
+
     head: {
       link: [
         {
@@ -19,7 +32,7 @@ export default defineNuxtConfig({
         },
         {
           rel: 'stylesheet',
-          href: 'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,400;1,500&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Source+Sans+3:wght@300;400;500;600&display=swap',
+          href: 'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,500&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Playfair+Display:wght@400;700;900&display=swap',
         },
         {
           rel: 'alternate',

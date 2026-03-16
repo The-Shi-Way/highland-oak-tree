@@ -1,13 +1,15 @@
 import { useQuery } from '@tanstack/vue-query';
 import { computed, type Ref } from 'vue';
 
+export type LeafType = 'prose' | 'blossom' | 'fruit' | 'seed';
+
 export interface ILeafListItem {
   id: string;
   title: string;
   slug: string;
   excerpt: string | null;
   featuredImage: string | null;
-  leafType: string;
+  leafType: LeafType;
   season: string;
   growth: string;
   vines: string[];
@@ -29,6 +31,11 @@ export interface ITrunkResponse {
   total: number;
   page: number;
   limit: number;
+}
+
+interface ITrunkApiResponse {
+  feed: ILeafListResponse;
+  seeds: ILeafListItem[];
 }
 
 interface ILeafFilters {
@@ -124,9 +131,16 @@ export function useTrunkFeed(page: Ref<number>) {
       const params = new URLSearchParams();
       params.set('page', String(page.value));
       params.set('limit', '12');
-      return await $fetch<ITrunkResponse>(
-        `${apiBase}/leaves?${params.toString()}`,
+      const raw = await $fetch<ITrunkApiResponse>(
+        `${apiBase}/leaves/trunk?${params.toString()}`,
       );
+      return {
+        feed: raw.feed.leaves,
+        seeds: raw.seeds,
+        total: raw.feed.total,
+        page: raw.feed.page,
+        limit: raw.feed.limit,
+      };
     },
   });
 }

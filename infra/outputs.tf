@@ -13,3 +13,8 @@ output "cognito_user_pool_id" {
 output "cognito_client_id" {
   value = module.auth.client_id
 }
+
+output "route53_name_servers" {
+  description = "Route 53 name servers for NS delegation at domain registrar"
+  value       = module.dns.name_servers
+}

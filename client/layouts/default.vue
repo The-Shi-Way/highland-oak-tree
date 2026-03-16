@@ -7,18 +7,28 @@
       <slot />
     </main>
 
+    <BackToTop />
+
     <footer class="site-footer" role="contentinfo">
       <div class="footer-inner">
-        <TreePine :size="16" :stroke-width="1.5" class="footer-icon" />
-        <p>&copy; {{ new Date().getFullYear() }} The Highland Oak Tree. All rights reserved.</p>
+        <div class="footer-about">
+          <p class="footer-brand">🌳 The Highland Oak Tree</p>
+          <p class="footer-tagline">A living journal of prose, poetry, ideas, and reflections.</p>
+        </div>
+        <nav class="footer-nav" aria-label="Footer navigation">
+          <NuxtLink to="/roots">Roots</NuxtLink>
+          <NuxtLink to="/grove">Grove</NuxtLink>
+          <NuxtLink to="/bulletin-board">Chirps</NuxtLink>
+          <NuxtLink to="/canopy">Canopy</NuxtLink>
+          <NuxtLink to="/search">Search</NuxtLink>
+        </nav>
+        <p class="footer-copy">&copy; {{ new Date().getFullYear() }} The Highland Oak Tree. All rights reserved.</p>
       </div>
     </footer>
   </div>
 </template>
 
 <script setup lang="ts">
-import { TreePine } from 'lucide-vue-next';
-
 const { currentSeason } = useSeason();
 </script>
 
@@ -42,24 +52,72 @@ const { currentSeason } = useSeason();
 
 .site-footer {
   border-top: 1px solid var(--color-border, #e8e5e0);
-  padding: 1.5rem 2rem;
+  padding: var(--space-xl, 2rem) var(--space-xl, 2rem);
   background: var(--color-surface, #f8f6f2);
 }
 
 .footer-inner {
+  max-width: 1200px;
+  margin: 0 auto;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  color: var(--color-muted, #8a9199);
-  font-size: 0.82rem;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  gap: 0.75rem;
+  text-align: center;
 }
 
-.footer-inner p { margin: 0; }
-.footer-icon { opacity: 0.5; }
+.footer-about {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.footer-brand {
+  font-family: var(--font-display, 'Playfair Display'), serif;
+  font-size: var(--text-base, 1rem);
+  font-weight: var(--weight-semibold, 600);
+  color: var(--color-primary, #4a7c59);
+  margin: 0;
+}
+
+.footer-tagline {
+  font-size: var(--text-sm, 0.875rem);
+  color: var(--color-muted, #8a9199);
+  margin: 0;
+  font-style: italic;
+  font-family: var(--font-accent, 'Cormorant Garamond', serif);
+}
+
+.footer-nav {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.footer-nav a {
+  font-size: var(--text-sm, 0.875rem);
+  color: var(--color-muted, #8a9199);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.footer-nav a:hover {
+  color: var(--color-primary, #4a7c59);
+}
+
+.footer-copy {
+  font-size: var(--text-xs, 0.75rem);
+  color: var(--color-muted, #8a9199);
+  margin: 0;
+}
 
 @media (max-width: 768px) {
   .site-main { padding: 1rem; }
+
+  .footer-inner {
+    flex-direction: column;
+    gap: var(--space-xs, 0.25rem);
+    text-align: center;
+  }
 }
 </style>

@@ -28,3 +28,54 @@ body::before {
 a, button {
   transition: color 0.2s, background-color 0.2s, box-shadow 0.2s;
 }
+
+/* Reset default link underline — individual components opt-in as needed */
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* ============================================
+   Keyboard focus indicators (Accessibility)
+   ============================================ */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--color-primary, #4a7c59);
+  outline-offset: 2px;
+}
+
+/* ============================================
+   Global content constraint
+   ============================================ */
+.trunk-page,
+.search-page,
+.grove-page,
+.branch-landing {
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--space-lg, 1.5rem);
+  padding-right: var(--space-lg, 1.5rem);
+}
+
+/* ============================================
+   Mobile responsive refinements
+   ============================================ */
+@media (max-width: 768px) {
+  /* Touch target sizing for mobile */
+  a, button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Ensure nav links meet touch target */
+  nav a, nav button {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+}

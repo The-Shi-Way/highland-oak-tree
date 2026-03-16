@@ -13,6 +13,7 @@ import { DashboardModule } from './modules/dashboard/dashboard.module';
 import { SeoModule } from './modules/seo/seo.module';
 import { LeafModule } from './modules/leaf/leaf.module';
 import { GroveModule } from './modules/grove/grove.module';
+import { ChirpModule } from './modules/chirp/chirp.module';
 
 @Module({
   imports: [
@@ -24,10 +25,11 @@ import { GroveModule } from './modules/grove/grove.module';
     DatabaseModule,
     RedisModule,
     AuthModule,
-    PostModule,   // Kept temporarily for migration source access
-    PoemModule,   // Kept temporarily for migration source access
+    PostModule,   // TODO: Remove after migration confirmed — only needed as migration source
+    PoemModule,   // TODO: Remove after migration confirmed — only needed as migration source
     LeafModule,
     GroveModule,
+    ChirpModule,
     MediaModule,
     AiAssistantModule,
     SearchModule,

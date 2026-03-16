@@ -1,85 +1,187 @@
 <template>
-  <div class="hero-tree" :class="`hero-tree--${season}`">
-    <svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" class="tree-svg" role="img" aria-label="Seasonal oak tree illustration">
-      <!-- Trunk -->
-      <rect x="185" y="160" width="30" height="100" rx="4" class="trunk" />
-      <!-- Roots -->
-      <path d="M190 260 Q170 280 150 285" class="root" />
-      <path d="M215 260 Q235 280 255 285" class="root" />
-
-      <!-- Canopy (spring/summer: full, autumn: warm, winter: bare) -->
-      <template v-if="season !== 'winter'">
-        <ellipse cx="200" cy="120" rx="100" ry="70" class="canopy" />
-        <ellipse cx="150" cy="140" rx="50" ry="40" class="canopy canopy-left" />
-        <ellipse cx="250" cy="140" rx="50" ry="40" class="canopy canopy-right" />
-      </template>
-      <template v-else>
-        <!-- Bare branches for winter -->
-        <line x1="200" y1="160" x2="150" y2="90" class="branch-line" />
-        <line x1="200" y1="160" x2="250" y2="80" class="branch-line" />
-        <line x1="200" y1="160" x2="180" y2="70" class="branch-line" />
-        <line x1="200" y1="160" x2="230" y2="100" class="branch-line" />
-        <line x1="150" y1="90" x2="120" y2="60" class="branch-line" />
-        <line x1="250" y1="80" x2="280" y2="50" class="branch-line" />
-      </template>
-
-      <!-- Spring blossoms -->
-      <template v-if="season === 'spring'">
-        <circle cx="160" cy="100" r="5" class="blossom" />
-        <circle cx="220" cy="90" r="4" class="blossom" />
-        <circle cx="180" cy="130" r="6" class="blossom" />
-        <circle cx="240" cy="120" r="5" class="blossom" />
-      </template>
-
-      <!-- Autumn falling elements -->
-      <template v-if="season === 'autumn'">
-        <circle cx="130" cy="200" r="3" class="falling-leaf" />
-        <circle cx="270" cy="210" r="4" class="falling-leaf" />
-        <circle cx="160" cy="220" r="3" class="falling-leaf" />
-      </template>
-
-      <!-- Winter frost dots -->
-      <template v-if="season === 'winter'">
-        <circle cx="140" cy="70" r="2" class="frost" />
-        <circle cx="260" cy="60" r="2" class="frost" />
-        <circle cx="190" cy="50" r="2" class="frost" />
-      </template>
-    </svg>
-  </div>
+  <section class="hero" :class="`hero--${season}`">
+    <img
+      class="hero__bg"
+      :src="bgUrl"
+      alt=""
+      aria-hidden="true"
+      loading="eager"
+    />
+    <div class="hero__overlay" />
+    <div class="hero__content">
+      <p class="hero__season-label">{{ seasonLabel }}</p>
+      <h1 class="hero__title">
+        <span class="hero__title-line hero__title-line--1">The Highland</span>
+        <span class="hero__title-line hero__title-line--2">Oak Tree</span>
+      </h1>
+      <p class="hero__tagline">
+        Where words take root, ideas blossom,<br/>
+        and every thought finds its branch.
+      </p>
+      <div class="hero__divider" aria-hidden="true">
+        <svg viewBox="0 0 120 20" fill="none">
+          <path d="M10 10 Q30 2 60 10 Q90 18 110 10" stroke="currentColor" stroke-width="1.5" opacity="0.5" fill="none"/>
+          <circle cx="60" cy="10" r="3" fill="currentColor" opacity="0.4"/>
+        </svg>
+      </div>
+    </div>
+  </section>
 </template>
 
 <script setup lang="ts">
-defineProps<{ season: string }>();
+import { computed } from 'vue';
+
+const props = defineProps<{ season: string }>();
+
+const bgUrls: Record<string, string> = {
+  spring: 'https://images.unsplash.com/photo-1502082553048-f009c37129b9?w=1400&q=75&auto=format&fit=crop',
+  summer: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1400&q=75&auto=format&fit=crop',
+  autumn: 'https://images.unsplash.com/photo-1543852786-1cf6624b9987?w=1400&q=75&auto=format&fit=crop',
+  winter: 'https://images.unsplash.com/photo-1491002052546-bf38f186af56?w=1400&q=75&auto=format&fit=crop',
+};
+
+const bgUrl = computed((): string => bgUrls[props.season] ?? bgUrls.spring);
+
+const seasonLabel = computed((): string => {
+  const labels: Record<string, string> = {
+    spring: '🌱 Spring Edition',
+    summer: '☀️ Summer Edition',
+    autumn: '🍂 Autumn Edition',
+    winter: '❄️ Winter Edition',
+  };
+  return labels[props.season] ?? '🌿 A Living Journal';
+});
 </script>
 
 <style scoped>
-.hero-tree {
+.hero {
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+  min-height: 260px;
   display: flex;
   justify-content: center;
-  padding: 2rem 0;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  padding: 2.5rem 2rem 2rem;
 }
-.tree-svg { width: 280px; height: auto; }
-.trunk { fill: #6d4c41; }
-.root { fill: none; stroke: #6d4c41; stroke-width: 2; }
 
-/* Spring */
-.hero-tree--spring .canopy { fill: #81c784; opacity: 0.85; }
-.hero-tree--spring .blossom { fill: #f48fb1; }
-
-/* Summer */
-.hero-tree--summer .canopy { fill: #4caf50; opacity: 0.9; }
-
-/* Autumn */
-.hero-tree--autumn .canopy { fill: #e65100; opacity: 0.8; }
-.hero-tree--autumn .canopy-left { fill: #ff8f00; }
-.hero-tree--autumn .canopy-right { fill: #c62828; opacity: 0.7; }
-.hero-tree--autumn .falling-leaf { fill: #ff6f00; }
-
-/* Winter */
-.hero-tree--winter .branch-line {
-  stroke: #795548;
-  stroke-width: 3;
-  stroke-linecap: round;
+.hero__bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 40%;
+  z-index: 0;
 }
-.hero-tree--winter .frost { fill: #b3e5fc; }
+
+.hero__overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.hero__content {
+  position: relative;
+  z-index: 2;
+  max-width: 600px;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  border-radius: 16px;
+  padding: 2rem 2.5rem 1.5rem;
+  animation: heroFadeIn 0.8s ease-out both;
+}
+
+.hero__season-label {
+  font-family: var(--font-body, sans-serif);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #fff;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+  margin: 0 0 0.8rem;
+  animation: heroSlideUp 0.6s ease-out 0.1s both;
+}
+
+.hero__title {
+  font-family: var(--font-display, 'Playfair Display', serif);
+  font-weight: 900;
+  line-height: 1.05;
+  margin: 0 0 1rem;
+  letter-spacing: -0.02em;
+  color: #fff;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+.hero__title-line { display: block; }
+
+.hero__title-line--1 {
+  font-size: clamp(1.8rem, 4.5vw, 2.8rem);
+  animation: heroSlideUp 0.6s ease-out 0.2s both;
+}
+
+.hero__title-line--2 {
+  font-size: clamp(2.5rem, 6.5vw, 4rem);
+  font-style: italic;
+  animation: heroSlideUp 0.6s ease-out 0.35s both;
+}
+
+.hero__tagline {
+  font-family: var(--font-poetry, 'Cormorant Garamond', Georgia, serif);
+  font-size: clamp(1.05rem, 2.5vw, 1.35rem);
+  font-style: italic;
+  line-height: 1.7;
+  color: #fff;
+  margin: 0 0 1.2rem;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.5), 0 1px 2px rgba(0, 0, 0, 0.3);
+  animation: heroSlideUp 0.6s ease-out 0.5s both;
+}
+
+.hero__divider {
+  display: flex;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.9);
+  animation: heroFadeIn 0.6s ease-out 0.65s both;
+}
+.hero__divider svg {
+  width: 100px;
+  height: 18px;
+}
+
+@keyframes heroFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes heroSlideUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 768px) {
+  .hero {
+    min-height: 200px;
+    padding: 1.5rem 1rem 1.2rem;
+  }
+  .hero__content {
+    padding: 1.2rem 1.5rem 1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__content,
+  .hero__season-label,
+  .hero__title-line--1,
+  .hero__title-line--2,
+  .hero__tagline,
+  .hero__divider {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
 </style>

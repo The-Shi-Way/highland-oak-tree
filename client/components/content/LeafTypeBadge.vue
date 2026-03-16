@@ -7,8 +7,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-
-type LeafType = 'prose' | 'blossom' | 'fruit' | 'seed';
+import type { LeafType } from '~/composables/useLeaves';
 
 const props = defineProps<{ leafType: LeafType }>();
 
@@ -28,7 +27,7 @@ const label = computed(() => config[props.leafType].label);
   display: inline-flex;
   align-items: center;
   gap: 0.3rem;
-  font-size: 0.78rem;
+  font-size: var(--text-xs, 0.75rem);
   font-weight: 500;
   padding: 0.2rem 0.55rem;
   border-radius: 12px;

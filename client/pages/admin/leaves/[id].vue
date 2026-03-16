@@ -44,7 +44,7 @@
           <label for="growth">Growth Stage</label>
           <select id="growth" v-model="leaf.growth" @change="handleSave">
             <option value="seedling">Seedling</option>
-            <option value="budding">Budding</option>
+            <option value="sapling">Sapling</option>
             <option value="mature">Mature</option>
             <option value="evergreen">Evergreen</option>
           </select>
@@ -80,6 +80,7 @@ import {
   unpublishLeaf,
   deleteLeaf,
 } from '~/composables/useAdminLeaves';
+import { useQueryClient } from '@tanstack/vue-query';
 import TipTapEditor from '~/components/content/TipTapEditor.vue';
 import AiSuggestionPanel from '~/components/content/AiSuggestionPanel.vue';
 import type { IAiSuggestion } from '~/composables/useAi';
@@ -90,7 +91,7 @@ const route = useRoute();
 const leafId = route.params.id as string;
 
 type LeafType = 'prose' | 'blossom' | 'fruit' | 'seed';
-type GrowthStage = 'seedling' | 'budding' | 'mature' | 'evergreen';
+type GrowthStage = 'seedling' | 'sapling' | 'mature' | 'evergreen';
 
 interface IEditableLeaf {
   title: string;
@@ -184,6 +185,8 @@ async function handleUnpublish(): Promise<void> {
 async function handleDelete(): Promise<void> {
   if (!window.confirm('Are you sure you want to delete this leaf?')) return;
   await deleteLeaf(leafId);
+  const queryClient = useQueryClient();
+  queryClient.invalidateQueries({ queryKey: ['admin-leaves'] });
   navigateTo('/admin/leaves');
 }
 </script>

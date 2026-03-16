@@ -10,3 +10,18 @@ variable "db_secret_arn" { type = string }
 variable "redis_endpoint" { type = string }
 variable "media_bucket" { type = string }
 variable "cdn_domain" { type = string }
+
+variable "server_target_group_arn" {
+  type    = string
+  default = ""
+}
+
+variable "client_target_group_arn" {
+  type    = string
+  default = ""
+}
+
+variable "domain_name" {
+  type    = string
+  default = ""
+}

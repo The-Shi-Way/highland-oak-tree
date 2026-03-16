@@ -11,7 +11,7 @@ defineProps<{ vine: string }>();
 <style scoped>
 .vine-tag {
   display: inline-block;
-  font-size: 0.78rem;
+  font-size: var(--text-xs, 0.75rem);
   color: var(--color-primary, #4a7c59);
   background: var(--color-tertiary, #faf3e0);
   padding: 0.15rem 0.5rem;

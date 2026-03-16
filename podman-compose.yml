@@ -4,17 +4,16 @@ services:
   postgres:
     image: postgres:16-alpine
     container_name: highland-oak-postgres
-    restart: unless-stopped
+    environment:
+      POSTGRES_DB: highland_oak_tree
+      POSTGRES_USER: highland_oak
+      POSTGRES_PASSWORD: local_dev_password
     ports:
       - '5432:5432'
-    environment:
-      POSTGRES_USER: ${DB_USER:-highland}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-highland_dev}
-      POSTGRES_DB: ${DB_NAME:-highland_oak_tree}
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U ${DB_USER:-highland}']
+      test: ['CMD-SHELL', 'pg_isready -U highland_oak -d highland_oak_tree']
       interval: 10s
       timeout: 5s
       retries: 5
@@ -22,11 +21,8 @@ services:
   redis:
     image: redis:7-alpine
     container_name: highland-oak-redis
-    restart: unless-stopped
     ports:
       - '6379:6379'
-    volumes:
-      - redisdata:/data
     healthcheck:
       test: ['CMD', 'redis-cli', 'ping']
       interval: 10s
@@ -36,23 +32,16 @@ services:
   minio:
     image: minio/minio:latest
     container_name: highland-oak-minio
-    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
     ports:
       - '9000:9000'
       - '9001:9001'
-    environment:
-      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
-      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin}
     volumes:
       - miniodata:/data
-    command: server /data --console-address ":9001"
-    healthcheck:
-      test: ['CMD', 'mc', 'ready', 'local']
-      interval: 10s
-      timeout: 5s
-      retries: 5
 
 volumes:
   pgdata:
-  redisdata:
   miniodata:

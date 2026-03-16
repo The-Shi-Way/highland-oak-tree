@@ -1,5 +1,7 @@
 # Requirements Document
 
+> **⚠️ ARCHIVED** — This spec is superseded by [`living-tree-redesign`](../living-tree-redesign/requirements.md). The Post/Poem dual-entity model described here has been replaced by the unified Leaf content system. Kept for historical reference only.
+
 ## Introduction
 
 A personal blog platform for an AI engineer and consultant, combining technical writing, poetry, and multimedia content with AI-powered content assistance. The platform serves two audiences: the admin author who creates and manages content, and public readers who consume it without authentication. The system is hosted on AWS, built with NestJS + Vue 3, and integrates AWS Bedrock for AI-assisted content refinement.

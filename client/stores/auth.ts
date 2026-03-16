@@ -37,15 +37,6 @@ function writeCookie(payload: ICookiePayload | null): void {
 
 export const useAuthStore = defineStore('auth', {
   state: (): IAuthState => {
-    // Hydrate from cookie on creation
-    const saved = readCookie();
-    if (saved && saved.expiresAt > Date.now()) {
-      return {
-        accessToken: saved.accessToken,
-        refreshToken: saved.refreshToken,
-        expiresAt: saved.expiresAt,
-      };
-    }
     return { accessToken: null, refreshToken: null, expiresAt: null };
   },
 
@@ -56,6 +47,16 @@ export const useAuthStore = defineStore('auth', {
   },
 
   actions: {
+    /** Hydrate state from cookie — safe to call on both SSR and client */
+    hydrate(): void {
+      const saved = readCookie();
+      if (saved && saved.expiresAt > Date.now()) {
+        this.accessToken = saved.accessToken;
+        this.refreshToken = saved.refreshToken;
+        this.expiresAt = saved.expiresAt;
+      }
+    },
+
     setTokens(accessToken: string, refreshToken: string, expiresIn: number): void {
       this.accessToken = accessToken;
       this.refreshToken = refreshToken;

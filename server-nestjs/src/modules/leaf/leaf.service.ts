@@ -113,9 +113,9 @@ export class LeafService {
       return err({ kind: 'not_found', entity: 'Leaf', id });
     }
 
-    leaf.status = 'archived';
-    const saved = await this.leafRepo.save(leaf);
-    return ok(this.toLeaf(saved));
+    const snapshot = this.toLeaf(leaf);
+    await this.leafRepo.remove(leaf);
+    return ok(snapshot);
   }
 
   async findBySlug(slug: string): Promise<Result<ILeaf, DomainError>> {
