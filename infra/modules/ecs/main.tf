@@ -113,6 +113,22 @@ resource "aws_iam_role_policy" "ecs_task_bedrock" {
   })
 }
 
+resource "aws_iam_role_policy" "ecs_task_cognito" {
+  name = "cognito-auth"
+  role = aws_iam_role.ecs_task.id
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect = "Allow"
+      Action = [
+        "cognito-idp:InitiateAuth",
+        "cognito-idp:GlobalSignOut"
+      ]
+      Resource = var.cognito_user_pool_arn
+    }]
+  })
+}
+
 resource "aws_cloudwatch_log_group" "server" {
   name              = "/ecs/${var.project}-${var.environment}/server"
   retention_in_days = 30
@@ -162,7 +178,10 @@ resource "aws_ecs_task_definition" "server" {
       { name = "REDIS_HOST", value = var.redis_endpoint },
       { name = "S3_BUCKET", value = var.media_bucket },
       { name = "CDN_BASE_URL", value = var.domain_name != "" ? "https://media.${var.domain_name}" : "https://${var.cdn_domain}" },
-      { name = "NODE_ENV", value = var.environment }
+      { name = "NODE_ENV", value = var.environment },
+      { name = "COGNITO_USER_POOL_ID", value = var.cognito_user_pool_id },
+      { name = "COGNITO_CLIENT_ID", value = var.cognito_client_id },
+      { name = "AWS_REGION", value = "us-east-1" }
     ]
   }])
 }

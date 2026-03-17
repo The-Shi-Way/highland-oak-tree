@@ -25,3 +25,18 @@ variable "domain_name" {
   type    = string
   default = ""
 }
+
+variable "cognito_user_pool_id" {
+  type    = string
+  default = ""
+}
+
+variable "cognito_client_id" {
+  type    = string
+  default = ""
+}
+
+variable "cognito_user_pool_arn" {
+  type    = string
+  default = ""
+}

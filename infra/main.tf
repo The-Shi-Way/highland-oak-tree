@@ -72,6 +72,9 @@ module "ecs" {
   server_target_group_arn = module.networking.server_target_group_arn
   client_target_group_arn = module.networking.client_target_group_arn
   domain_name             = var.domain_name
+  cognito_user_pool_id    = module.auth.user_pool_id
+  cognito_client_id       = module.auth.client_id
+  cognito_user_pool_arn   = module.auth.user_pool_arn
 }
 
 module "dns" {
