@@ -1,0 +1,11 @@
+.git
+.cache
+.kiro
+docs
+e2e
+infra
+node_modules
+**/node_modules
+**/.nuxt
+**/dist
+**/.output

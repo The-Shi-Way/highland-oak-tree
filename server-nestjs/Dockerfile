@@ -5,11 +5,18 @@ RUN corepack enable && corepack prepare pnpm@latest --activate
 
 WORKDIR /app
 
-COPY package.json pnpm-lock.yaml* ./
-RUN pnpm install --no-frozen-lockfile
+# Copy workspace root files first (lockfile + overrides)
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY server-nestjs/package.json ./server-nestjs/
 
-COPY . .
-RUN pnpm build
+# Install only server deps using workspace filtering
+RUN pnpm install --filter highland-oak-tree-server --frozen-lockfile
+
+# Copy server source
+COPY server-nestjs/ ./server-nestjs/
+
+# Build from workspace root
+RUN pnpm --filter highland-oak-tree-server build
 
 # ── Stage 2: Production ──────────────────────────────
 FROM node:22-alpine AS runner
@@ -20,10 +27,12 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 
-COPY package.json pnpm-lock.yaml* ./
-RUN pnpm install --no-frozen-lockfile --prod
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY server-nestjs/package.json ./server-nestjs/
 
-COPY --from=builder /app/dist ./dist
+RUN pnpm install --filter highland-oak-tree-server --frozen-lockfile --prod
+
+COPY --from=builder /app/server-nestjs/dist ./server-nestjs/dist
 
 EXPOSE 3001
 
@@ -32,4 +41,4 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
 
 USER node
 
-CMD ["node", "dist/main"]
+CMD ["node", "server-nestjs/dist/main"]

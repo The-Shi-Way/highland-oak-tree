@@ -5,11 +5,18 @@ RUN corepack enable && corepack prepare pnpm@latest --activate
 
 WORKDIR /app
 
-COPY package.json pnpm-lock.yaml* ./
-RUN pnpm install --no-frozen-lockfile
+# Copy workspace root files first (lockfile + overrides)
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY client/package.json ./client/
 
-COPY . .
-RUN pnpm build
+# Install only client deps using workspace filtering
+RUN pnpm install --filter client --frozen-lockfile
+
+# Copy client source
+COPY client/ ./client/
+
+# Build from workspace root
+RUN pnpm --filter client build
 
 # ── Stage 2: Production ──────────────────────────────
 FROM node:22-alpine AS runner
@@ -18,7 +25,7 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 
-COPY --from=builder /app/.output ./.output
+COPY --from=builder /app/client/.output ./.output
 
 EXPOSE 3000
 

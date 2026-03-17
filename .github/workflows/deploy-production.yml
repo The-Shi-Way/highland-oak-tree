@@ -51,16 +51,18 @@ jobs:
 
       - name: Build and push server image
         run: |
-          docker build -t $ECR_REGISTRY/$SERVER_REPO:${{ github.sha }} \
+          docker build -f server-nestjs/Dockerfile \
+                        -t $ECR_REGISTRY/$SERVER_REPO:${{ github.sha }} \
                         -t $ECR_REGISTRY/$SERVER_REPO:latest \
-                        server-nestjs/
+                        .
           docker push $ECR_REGISTRY/$SERVER_REPO --all-tags
 
       - name: Build and push client image
         run: |
-          docker build -t $ECR_REGISTRY/$CLIENT_REPO:${{ github.sha }} \
+          docker build -f client/Dockerfile \
+                        -t $ECR_REGISTRY/$CLIENT_REPO:${{ github.sha }} \
                         -t $ECR_REGISTRY/$CLIENT_REPO:latest \
-                        client/
+                        .
           docker push $ECR_REGISTRY/$CLIENT_REPO --all-tags
 
       - name: Update ECS server service (rolling)
