@@ -1,10 +1,41 @@
 import { NestFactory } from '@nestjs/core';
-import { ValidationPipe } from '@nestjs/common';
+import { ValidationPipe, Logger } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { DataSource } from 'typeorm';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 
+async function runMigrations(): Promise<void> {
+  const logger = new Logger('Migrations');
+
+  if (process.env.NODE_ENV !== 'production') {
+    logger.log('Skipping migrations in non-production (synchronize handles schema)');
+    return;
+  }
+
+  logger.log('Running database migrations...');
+  const dataSource = new DataSource({
+    type: 'postgres',
+    host: process.env.DB_HOST ?? 'localhost',
+    port: parseInt(process.env.DB_PORT ?? '5432', 10),
+    username: process.env.DB_USER ?? 'highland',
+    password: process.env.DB_PASSWORD ?? 'highland_dev',
+    database: process.env.DB_NAME ?? 'highland_oak_tree',
+    ssl: { rejectUnauthorized: false },
+    migrations: [__dirname + '/database/migrations/*.js'],
+    logging: true,
+  });
+
+  await dataSource.initialize();
+  const migrations = await dataSource.runMigrations();
+  logger.log(`Executed ${migrations.length} migration(s)`);
+  await dataSource.destroy();
+  logger.log('Migrations complete');
+}
+
 async function bootstrap(): Promise<void> {
+  await runMigrations();
+
   const app = await NestFactory.create(AppModule);
 
   app.setGlobalPrefix('api');

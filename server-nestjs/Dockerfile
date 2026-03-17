@@ -33,7 +33,6 @@ COPY server-nestjs/package.json ./server-nestjs/
 RUN pnpm install --filter highland-oak-tree-server --frozen-lockfile --prod
 
 COPY --from=builder /app/server-nestjs/dist ./server-nestjs/dist
-COPY server-nestjs/docker-entrypoint.sh ./server-nestjs/
 
 EXPOSE 3001
 
@@ -42,4 +41,4 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
 
 USER node
 
-ENTRYPOINT ["sh", "server-nestjs/docker-entrypoint.sh"]
+CMD ["node", "server-nestjs/dist/main"]

@@ -156,8 +156,8 @@ resource "aws_ecs_task_definition" "server" {
       command     = ["CMD-SHELL", "wget -qO- http://localhost:3001/api/health || exit 1"]
       interval    = 30
       timeout     = 5
-      retries     = 3
-      startPeriod = 10
+      retries     = 5
+      startPeriod = 60
     }
     logConfiguration = {
       logDriver = "awslogs"

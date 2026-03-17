@@ -10,6 +10,6 @@ export default new DataSource({
   ssl: process.env.NODE_ENV === 'production'
     ? { rejectUnauthorized: false }
     : false,
-  migrations: ['dist/database/migrations/*.js'],
+  migrations: [__dirname + '/migrations/*.js'],
   logging: true,
 });
