@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class CreatePostsAndTags1710000002 implements MigrationInterface {
-  name = 'CreatePostsAndTags1710000002';
+export class CreatePostsAndTags1710000002000 implements MigrationInterface {
+  name = 'CreatePostsAndTags1710000002000';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     // Create content_status enum

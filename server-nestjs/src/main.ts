@@ -14,23 +14,27 @@ async function runMigrations(): Promise<void> {
   }
 
   logger.log('Running database migrations...');
-  const dataSource = new DataSource({
-    type: 'postgres',
-    host: process.env.DB_HOST ?? 'localhost',
-    port: parseInt(process.env.DB_PORT ?? '5432', 10),
-    username: process.env.DB_USER ?? 'highland',
-    password: process.env.DB_PASSWORD ?? 'highland_dev',
-    database: process.env.DB_NAME ?? 'highland_oak_tree',
-    ssl: { rejectUnauthorized: false },
-    migrations: [__dirname + '/database/migrations/*.js'],
-    logging: true,
-  });
+  try {
+    const dataSource = new DataSource({
+      type: 'postgres',
+      host: process.env.DB_HOST ?? 'localhost',
+      port: parseInt(process.env.DB_PORT ?? '5432', 10),
+      username: process.env.DB_USER ?? 'highland',
+      password: process.env.DB_PASSWORD ?? 'highland_dev',
+      database: process.env.DB_NAME ?? 'highland_oak_tree',
+      ssl: { rejectUnauthorized: false },
+      migrations: [__dirname + '/database/migrations/*.js'],
+      logging: true,
+    });
 
-  await dataSource.initialize();
-  const migrations = await dataSource.runMigrations();
-  logger.log(`Executed ${migrations.length} migration(s)`);
-  await dataSource.destroy();
-  logger.log('Migrations complete');
+    await dataSource.initialize();
+    const migrations = await dataSource.runMigrations();
+    logger.log(`Executed ${migrations.length} migration(s)`);
+    await dataSource.destroy();
+    logger.log('Migrations complete');
+  } catch (error: unknown) {
+    logger.error('Migration failed — server will start anyway', error);
+  }
 }
 
 async function bootstrap(): Promise<void> {

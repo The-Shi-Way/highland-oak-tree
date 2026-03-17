@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class CreateLeavesAndGrove1710000005 implements MigrationInterface {
-  name = 'CreateLeavesAndGrove1710000005';
+export class CreateLeavesAndGrove1710000005000 implements MigrationInterface {
+  name = 'CreateLeavesAndGrove1710000005000';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     // Create enums for the leaf model
