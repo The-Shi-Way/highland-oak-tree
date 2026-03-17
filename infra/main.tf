@@ -34,6 +34,7 @@ module "networking" {
   environment     = var.environment
   project         = var.project
   certificate_arn = module.dns.certificate_arn
+  domain_name     = var.domain_name
 }
 
 module "database" {
