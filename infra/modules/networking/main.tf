@@ -114,7 +114,7 @@ resource "aws_lb" "main" {
 # --- Target Groups ---
 
 resource "aws_lb_target_group" "server" {
-  name        = "${var.project}-${var.environment}-server-tg"
+  name        = "hot-${var.environment}-server-tg"
   port        = 3001
   protocol    = "HTTP"
   vpc_id      = aws_vpc.main.id
@@ -134,7 +134,7 @@ resource "aws_lb_target_group" "server" {
 }
 
 resource "aws_lb_target_group" "client" {
-  name        = "${var.project}-${var.environment}-client-tg"
+  name        = "hot-${var.environment}-client-tg"
   port        = 3000
   protocol    = "HTTP"
   vpc_id      = aws_vpc.main.id
