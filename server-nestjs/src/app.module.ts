@@ -14,8 +14,10 @@ import { SeoModule } from './modules/seo/seo.module';
 import { LeafModule } from './modules/leaf/leaf.module';
 import { GroveModule } from './modules/grove/grove.module';
 import { ChirpModule } from './modules/chirp/chirp.module';
+import { HealthController } from './health.controller';
 
 @Module({
+  controllers: [HealthController],
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
