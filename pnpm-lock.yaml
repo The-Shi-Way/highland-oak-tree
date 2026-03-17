@@ -21,25 +21,25 @@ importers:
         specifier: ^5.50.0
         version: 5.92.9(vue@3.5.30(typescript@5.9.3))
       '@tiptap/extension-image':
-        specifier: ^3.20.1
+        specifier: 3.20.1
         version: 3.20.1(@tiptap/core@3.20.1(@tiptap/pm@3.20.1))
       '@tiptap/extension-link':
-        specifier: ^3.20.1
+        specifier: 3.20.1
         version: 3.20.1(@tiptap/core@3.20.1(@tiptap/pm@3.20.1))(@tiptap/pm@3.20.1)
       '@tiptap/extension-placeholder':
-        specifier: ^3.20.1
+        specifier: 3.20.1
         version: 3.20.1(@tiptap/extensions@3.20.1(@tiptap/core@3.20.1(@tiptap/pm@3.20.1))(@tiptap/pm@3.20.1))
       '@tiptap/html':
-        specifier: ^3.20.1
-        version: 3.20.3(@tiptap/core@3.20.1(@tiptap/pm@3.20.1))(@tiptap/pm@3.20.1)(happy-dom@20.8.4)
+        specifier: 3.20.1
+        version: 3.20.1(@tiptap/core@3.20.1(@tiptap/pm@3.20.1))(@tiptap/pm@3.20.1)(happy-dom@20.8.4)
       '@tiptap/pm':
-        specifier: ^3.20.1
+        specifier: 3.20.1
         version: 3.20.1
       '@tiptap/starter-kit':
-        specifier: ^3.20.1
+        specifier: 3.20.1
         version: 3.20.1
       '@tiptap/vue-3':
-        specifier: ^3.20.1
+        specifier: 3.20.1
         version: 3.20.1(@floating-ui/dom@1.7.6)(@tiptap/core@3.20.1(@tiptap/pm@3.20.1))(@tiptap/pm@3.20.1)(vue@3.5.30(typescript@5.9.3))
       lucide-vue-next:
         specifier: ^0.577.0
@@ -2812,11 +2812,11 @@ packages:
       '@tiptap/core': ^3.20.1
       '@tiptap/pm': ^3.20.1
 
-  '@tiptap/html@3.20.3':
-    resolution: {integrity: sha512-oAzw9T2Mp75rAg/ifDJWu/zwAyIz/M0yvf/E9fUs+NDgmQrurrwinUqz1Q8TmQRa0cLRceGytfInWqNiV5C6tg==}
+  '@tiptap/html@3.20.1':
+    resolution: {integrity: sha512-vElmnCWIqIj8DIS1lIxKKlN8pQEZVNiRfh4RZ2TL4tdZDsfS29US2lbgWEeI8lZdgr5C5JuoC/X1Nv+N8tJn6A==}
     peerDependencies:
-      '@tiptap/core': ^3.20.3
-      '@tiptap/pm': ^3.20.3
+      '@tiptap/core': ^3.20.1
+      '@tiptap/pm': ^3.20.1
       happy-dom: ^20.0.2
 
   '@tiptap/pm@3.20.1':
@@ -10834,7 +10834,7 @@ snapshots:
       '@tiptap/core': 3.20.1(@tiptap/pm@3.20.1)
       '@tiptap/pm': 3.20.1
 
-  '@tiptap/html@3.20.3(@tiptap/core@3.20.1(@tiptap/pm@3.20.1))(@tiptap/pm@3.20.1)(happy-dom@20.8.4)':
+  '@tiptap/html@3.20.1(@tiptap/core@3.20.1(@tiptap/pm@3.20.1))(@tiptap/pm@3.20.1)(happy-dom@20.8.4)':
     dependencies:
       '@tiptap/core': 3.20.1(@tiptap/pm@3.20.1)
       '@tiptap/pm': 3.20.1
