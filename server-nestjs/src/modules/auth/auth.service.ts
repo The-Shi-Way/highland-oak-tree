@@ -196,6 +196,7 @@ export class AuthService {
 
   /**
    * Validates a JWT access token by decoding and checking expiry.
+   * Handles both Cognito access tokens (username claim) and ID tokens (email claim).
    * In production, also verify signature against Cognito JWKS.
    */
   validateToken(token: string): Result<{ sub: string; email: string }, DomainError> {
@@ -215,9 +216,18 @@ export class AuthService {
       }
 
       const sub = payload['sub'];
-      const email = payload['email'] ?? payload['cognito:username'];
+      if (typeof sub !== 'string') {
+        return err({ kind: 'unauthorized', message: 'Invalid token payload' });
+      }
 
-      if (typeof sub !== 'string' || typeof email !== 'string') {
+      // Cognito access tokens use 'username', ID tokens use 'email' or 'cognito:username'.
+      // Dev tokens use 'email'. Accept any of these as the identity claim.
+      const email =
+        (typeof payload['email'] === 'string' ? payload['email'] : undefined) ??
+        (typeof payload['cognito:username'] === 'string' ? payload['cognito:username'] : undefined) ??
+        (typeof payload['username'] === 'string' ? payload['username'] : undefined);
+
+      if (!email) {
         return err({ kind: 'unauthorized', message: 'Invalid token payload' });
       }
 
